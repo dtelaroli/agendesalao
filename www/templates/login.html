@@ -1,20 +1,70 @@
-<ion-view view-title="Agende Salão - Cliente">
+<ion-view view-title="Agende Salão - Proprietário">
   <ion-content class="padding">
-    <div class="list card">
-      <div class="item item-divider">Bem Vindo!</div>
-      <div class="item item-body">
-        <div>
-          Você precisa criar uma conta ou efetuar login para ter acesso aos nossos profissionais. Utilize a mídia social de sua preferência.
+    <div ng-if="!user.$logged">
+      <div class="list card">
+        <div class="item item-divider">Bem Vindo!</div>
+        <div class="item item-body">
+          <div>
+            Você precisa criar uma conta ou efetuar login para ter acesso aos nossos profissionais. Utilize a mídia social de sua preferência.
+          </div>
         </div>
       </div>
+      <div class="button-bar">
+        <button class="button button-calm" ng-click="login('google')">
+          Google+
+        </button>
+        <button class="button button-calm" ng-click="login('facebook')">
+          Facebook
+        </button>
+      </div>   
     </div>
-    <div class="button-bar">
-      <button class="button button-calm" ng-click="login('google')">
-        Google+
-      </button>
-      <button class="button button-calm" ng-click="login('facebook')">
-        Facebook
-      </button>
+
+    <div ng-if="user.$logged">
+      <div class="list card">
+        <div class="item item-divider">Cadastro</div>
+        <div class="item item-body">
+          <div>
+            Olá {{user.name}}, é necessário completar seu cadastro para poder receber agendamentos na sua conta.
+          </div>
+          <div>
+            Preencha seus dados pessoais e escolha seus horários de trabalho que serão disponibilizados aos clientes.
+          </div>
+        </div>
+      </div>
+      <form name="userData" novalidate>
+        <div class="list">
+          <label class="item item-input">
+            <span class="input-label">CPF</span>
+            <input type="text" maxlength="11" ng-model="user.cpf" required>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">Telefone</span>
+            <input type="tel" maxlength="11" ng-model="user.tel" required>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">CEP</span>
+            <input type="text" maxlength="8" ng-model="cep.value" required>
+          </label>
+          <label class="item item-input" ng-if="cep.$present">
+            <span class="input-label">Endereço</span>
+            <textarea type="text" maxlength="8" rows="4" ng-model="user.address" required></textarea>
+          </label>
+          <label class="item item-input" ng-if="cep.$present">
+            <span class="input-label">Número</span>
+            <input type="text" maxlength="8" ng-model="user.number" required>
+          </label>
+          <label class="item item-input" ng-if="cep.$present">
+            <span class="input-label">Complemento</span>
+            <input type="text" maxlength="20" ng-model="user.complement">
+          </label>
+        </div>
+
+        <div class="button-bar">
+          <button class="button button-calm" ng-click="registry()">
+            Salvar
+          </button>
+        </div>
+      </form>   
     </div>
   </ion-content>
 </ion-view>
