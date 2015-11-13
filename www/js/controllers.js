@@ -8,13 +8,13 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     });
 })
 
-.controller('LoginCtrl', function($scope, $auth, $state, CepService) {
+.controller('LoginCtrl', function($scope, $auth, $state, CepService, UserService) {
 
-  $scope.user = {$logged: false};
+  $scope.user = new UserService({$logged: false});
   $scope.cep = {value: '', $present: false};
 
   $auth.validateUser().then(function(user) {
-    $scope.user = user;
+    $scope.user = angular.extend($scope.user, user);
     $scope.user.$logged = true;
     // $state.go('admin.dash');
   });
@@ -22,7 +22,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   $scope.login = function(provider) {
     $auth.authenticate(provider)
       .then(function(resp) {
-        $scope.user = resp;
+        $scope.user = angular.extend($scope.user, resp);
         $scope.user.$logged = true;
         // $state.go('admin.dash');
       })
@@ -31,26 +31,55 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
       });
   };
 
-  $scope.timeStart = {
-    inputEpochTime: new Date(0, 0, 0, 9).getHours() * 60 * 60,
-    step: 10,
-    format: 24,
-    setLabel: 'Selecionar',
-    closeLabel: 'Fechar',
-    callback: function(val) {
-      $scope.timeStart.inputEpochTime = val;
-    }
+  function createDateObj(hour) {
+    var obj = {
+      inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
+      step: 10,
+      format: 24,
+      setLabel: 'Selecionar',
+      closeLabel: 'Fechar',
+      callback: function(val) {
+        if(val !== undefined) {
+          obj.inputEpochTime = val;
+        }
+      }
+    };
+    return obj;
   };
 
-  $scope.timeEnd = {
-    inputEpochTime: new Date(0, 0, 0, 19).getHours() * 60 * 60,
-    step: 10,
-    format: 24,
-    setLabel: 'Selecionar',
-    closeLabel: 'Fechar',
-    callback: function(val) {
-      $scope.timeEnd.inputEpochTime = val;
-    }
+  $scope.timeStartObj = createDateObj(9);
+  $scope.timeEndObj = createDateObj(20);
+
+  $scope.timeLunchStartObj = createDateObj(12);
+  $scope.timeLunchEndObj = createDateObj(13);
+
+  $scope.timeBreakStartObj = createDateObj(16);
+  $scope.timeBreakEndObj = createDateObj(17);
+
+  $scope.days = [
+    {id: 'mon', label: 'Segunda-feira'},
+    {id: 'tue', label: 'Terça-feira'},
+    {id: 'wed', label: 'Quarta-feira'},
+    {id: 'thu', label: 'Quinta-feira'},
+    {id: 'fri', label: 'Sexta-feira'},
+    {id: 'sat', label: 'Sábado'},
+    {id: 'sun', label: 'Domingo'}
+  ];
+  $scope.day = {selected: $scope.days[0]};
+
+  $scope.hours = [];
+  $scope.addHour = function() {
+    $scope.hours.push({
+      day: $scope.day.selected,
+      start: $scope.timeStartObj.inputEpochTime,
+      end: $scope.timeEndObj.inputEpochTime,
+      startLunch: $scope.timeLunchStartObj.inputEpochTime,
+      endLunch: $scope.timeLunchEndObj.inputEpochTime,
+      startDinner: $scope.timeBreakStartObj.inputEpochTime,
+      endDinner: $scope.timeBreakEndObj.inputEpochTime
+    });
+    $scope.days.shift();
+    $scope.day.selected = $scope.days[0];
   };
 
   $scope.$watch('cep.value', function(cep) {
@@ -62,6 +91,14 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
       });
     }
   });
+
+  $scope.registry = function() {
+    $scope.user.$save(function(result) {
+      console.log(result);
+    }, function(error) {
+      console.error(error);
+    });
+  };
 })
 
 .controller('DashCtrl', function($scope, $auth) {

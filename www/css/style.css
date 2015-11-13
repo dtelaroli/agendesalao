@@ -4,15 +4,34 @@
   top: 1px;
 }
 
+.item-time-content {
+  display: block;
+  padding-right: 10px;
+}
+
+.item-time-content .input-label {
+  display: inline-block;
+  float: left;
+}
+
 .item-time {
-  right: 20px;
-  position: absolute;
-  top: -4px;
+  position: relative;
+  float: right;
+  margin: 0 4px;
 }
 
 .item-time button {
   min-height: 36px;
   max-height: 36px;
-  margin: 5px;
   line-height: 36px;
+  padding: 0 10px;
+}
+
+.item-time.separator {
+  margin-top: 7px;
+}
+
+.list.hours
+.item strong {
+  font-weight: normal
 }

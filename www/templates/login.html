@@ -35,6 +35,14 @@
         <div class="list card">
           <div class="item item-divider">Dados profissionais</div>
           <label class="item item-input">
+            <span class="input-label">Empresa</span>
+            <input type="text" maxlength="30" ng-model="user.company" required>
+          </label>
+          <label class="item item-input">
+            <span class="input-label">Serviços</span>
+            <textarea ng-model="user.description" rows="4" required></textarea>
+          </label>
+          <label class="item item-input">
             <span class="input-label">CPF</span>
             <input type="text" maxlength="11" ng-model="user.cpf" required>
           </label>
@@ -57,42 +65,77 @@
           <label class="item item-input" ng-if="cep.$present">
             <span class="input-label">Complemento</span>
             <input type="text" maxlength="20" ng-model="user.complement">
-          </label>
+          </label>          
         </div>
 
-        <div class="list card">
-          <div class="item item-divider">Horários de trabalho</div>
+        <div class="list card" ng-if="days.length > 0">
+          <div class="item item-divider">Adicionar Horários de trabalho</div>
 
           <label class="item item-input item-select">
             <span class="input-label">Dia</span>
-            <select>
-              <option value=""></option>
-              <option value="mon">Segunda</option>
-              <option value="tue">Terça</option>
-              <option value="wed">Quarta</option>
-              <option value="thu">Quinta</option>
-              <option value="fri">Sexta</option>
-              <option value="sat">Sábado</option>
-              <option value="sun">Domingo</option>
+            <select ng-model="day.selected" ng-options="item as item.label for item in days">
             </select>
           </label>
-          <label class="item item-input item-button-right">
-            <span class="input-label">Início Expediente</span>
-            <ionic-timepicker input-obj="timeStart" class="item-time">
-              <button class="button button-block button-light overflowShow">
-                <standard-time-no-meridian etime='timeStart.inputEpochTime'></standard-time-no-meridian>
+          
+          <div class="item item-input item-time-content">
+            <span class="input-label">Expediente</span>
+            <ionic-timepicker input-obj="timeEndObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeEndObj.inputEpochTime'></standard-time-no-meridian>
               </button>
             </ionic-timepicker>
-          </label>
-          <label class="item item-input item-button-right">
-            <span class="input-label">Fim Expediente</span>
-            <ionic-timepicker input-obj="timeEnd" class="ionic-timepicker item-time">
-              <button class="button button-block button-light overflowShow">
-                <standard-time-no-meridian etime='timeEnd.inputEpochTime'></standard-time-no-meridian>
+            <span class="item-time separator">/</span>
+            <ionic-timepicker input-obj="timeStartObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeStartObj.inputEpochTime'></standard-time-no-meridian>
               </button>
             </ionic-timepicker>
-          </label>
+          </div>
+
+          <div class="item item-input item-time-content">
+            <span class="input-label">Almoço</span>
+            <ionic-timepicker input-obj="timeLunchEndObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeLunchEndObj.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
+            <span class="item-time separator">/</span>
+            <ionic-timepicker input-obj="timeLunchStartObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeLunchStartObj.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
+          </div>
+
+          <div class="item item-input item-time-content">
+            <span class="input-label">Lanche</span>
+            <ionic-timepicker input-obj="timeBreakEndObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeBreakEndObj.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
+            <span class="item-time separator">/</span>
+            <ionic-timepicker input-obj="timeBreakStartObj" class="item-time">
+              <button class="button button-light">
+                <standard-time-no-meridian etime='timeBreakStartObj.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
+          </div>
+
+          <button class="button button-block" ng-click="addHour()">Adicionar</button>
         </div>
+
+        <ul class="list card hours" ng-if="hours.length > 0">
+          <li class="item item-divider">Horários adicionados</li>
+          <li class="item" ng-repeat="hour in hours">
+            {{hour.day.label}} - <standard-time-no-meridian etime="hour.start"></standard-time-no-meridian> às
+            <standard-time-no-meridian etime="hour.startLunch"></standard-time-no-meridian> /
+            <standard-time-no-meridian etime="hour.endLunch"></standard-time-no-meridian> às
+            <standard-time-no-meridian etime="hour.startDinner"></standard-time-no-meridian> /
+            <standard-time-no-meridian etime="hour.endDinner"></standard-time-no-meridian> às
+            <standard-time-no-meridian etime="hour.end"></standard-time-no-meridian>
+          </li>
+        </ul>
 
         <div class="button-bar">
           <button class="button button-calm" ng-click="registry()">

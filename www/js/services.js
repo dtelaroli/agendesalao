@@ -6,4 +6,8 @@ angular.module('starter.services', ['ngResource'])
       headers: {'Accept': 'application/json'}
     }
   });
+})
+
+.factory('UserService', function($resource) {
+  return $resource('http://localhost:3000/users/:action.:format', {format: 'json'});
 });
