@@ -32,7 +32,8 @@
         </div>
       </div>
       <form name="userData" novalidate>
-        <div class="list">
+        <div class="list card">
+          <div class="item item-divider">Dados profissionais</div>
           <label class="item item-input">
             <span class="input-label">CPF</span>
             <input type="text" maxlength="11" ng-model="user.cpf" required>
@@ -45,10 +46,10 @@
             <span class="input-label">CEP</span>
             <input type="text" maxlength="8" ng-model="cep.value" required>
           </label>
-          <label class="item item-input" ng-if="cep.$present">
+          <div class="item item-input item-body" ng-if="cep.$present">
             <span class="input-label">Endereço</span>
-            <textarea type="text" maxlength="8" rows="4" ng-model="user.address" required></textarea>
-          </label>
+            {{user.address}}
+          </div>
           <label class="item item-input" ng-if="cep.$present">
             <span class="input-label">Número</span>
             <input type="text" maxlength="8" ng-model="user.number" required>
@@ -56,6 +57,40 @@
           <label class="item item-input" ng-if="cep.$present">
             <span class="input-label">Complemento</span>
             <input type="text" maxlength="20" ng-model="user.complement">
+          </label>
+        </div>
+
+        <div class="list card">
+          <div class="item item-divider">Horários de trabalho</div>
+
+          <label class="item item-input item-select">
+            <span class="input-label">Dia</span>
+            <select>
+              <option value=""></option>
+              <option value="mon">Segunda</option>
+              <option value="tue">Terça</option>
+              <option value="wed">Quarta</option>
+              <option value="thu">Quinta</option>
+              <option value="fri">Sexta</option>
+              <option value="sat">Sábado</option>
+              <option value="sun">Domingo</option>
+            </select>
+          </label>
+          <label class="item item-input item-button-right">
+            <span class="input-label">Início Expediente</span>
+            <ionic-timepicker input-obj="timeStart" class="item-time">
+              <button class="button button-block button-light overflowShow">
+                <standard-time-no-meridian etime='timeStart.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
+          </label>
+          <label class="item item-input item-button-right">
+            <span class="input-label">Fim Expediente</span>
+            <ionic-timepicker input-obj="timeEnd" class="ionic-timepicker item-time">
+              <button class="button button-block button-light overflowShow">
+                <standard-time-no-meridian etime='timeEnd.inputEpochTime'></standard-time-no-meridian>
+              </button>
+            </ionic-timepicker>
           </label>
         </div>
 

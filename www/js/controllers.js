@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['ng-token-auth'])
+angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
 
 .config(function($authProvider) {
     $authProvider.configure({
@@ -31,11 +31,33 @@ angular.module('starter.controllers', ['ng-token-auth'])
       });
   };
 
+  $scope.timeStart = {
+    inputEpochTime: new Date(0, 0, 0, 9).getHours() * 60 * 60,
+    step: 10,
+    format: 24,
+    setLabel: 'Selecionar',
+    closeLabel: 'Fechar',
+    callback: function(val) {
+      $scope.timeStart.inputEpochTime = val;
+    }
+  };
+
+  $scope.timeEnd = {
+    inputEpochTime: new Date(0, 0, 0, 19).getHours() * 60 * 60,
+    step: 10,
+    format: 24,
+    setLabel: 'Selecionar',
+    closeLabel: 'Fechar',
+    callback: function(val) {
+      $scope.timeEnd.inputEpochTime = val;
+    }
+  };
+
   $scope.$watch('cep.value', function(cep) {
     if($scope.cep.value.length == 8) {
       CepService.get({cep: $scope.cep.value}, function(address) {
         $scope.cep.$present = true;
-        $scope.user.address = address.logradouro + ', ' + address.bairro + ', ' + address.localidade + ' - ' + address.uf;
+        $scope.user.address = address.logradouro + ' ' + address.complemento + ', ' + address.bairro + ' - ' + address.localidade + ' / ' + address.uf;
         $scope.user = angular.extend($scope.user, address);
       });
     }

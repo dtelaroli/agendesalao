@@ -3,3 +3,16 @@
 .item-select select {
   top: 1px;
 }
+
+.item-time {
+  right: 20px;
+  position: absolute;
+  top: -4px;
+}
+
+.item-time button {
+  min-height: 36px;
+  max-height: 36px;
+  margin: 5px;
+  line-height: 36px;
+}
