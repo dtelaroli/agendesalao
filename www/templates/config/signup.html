@@ -1,0 +1,55 @@
+<ion-view view-title="Agende Salão - Proprietário">
+  <ion-content class="padding">
+    <div class="list card">
+      <div class="item item-divider">Cadastro</div>
+      <div class="item item-body">
+        <div>
+          Olá {{user.name}}, é necessário completar seu cadastro para poder receber agendamentos na sua conta.
+        </div>
+      </div>
+    </div>
+    <form name="userData" novalidate ng-submit="registry()">
+      <div class="list card">
+        <div class="item item-divider">Dados profissionais</div>
+        <label class="item item-input">
+          <span class="input-label">Empresa</span>
+          <input type="text" maxlength="30" ng-model="user.company" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Serviços</span>
+          <textarea ng-model="user.description" rows="4" required></textarea>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">CPF</span>
+          <input type="text" maxlength="11" ng-model="user.cpf" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Telefone</span>
+          <input type="tel" maxlength="11" ng-model="user.tel" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">CEP</span>
+          <input type="text" maxlength="8" ng-model="cep.value" required>
+        </label>
+        <div class="item item-input item-body" ng-if="cep.$present">
+          <span class="input-label">Endereço</span>
+          {{user.address}}
+        </div>
+        <label class="item item-input" ng-if="cep.$present">
+          <span class="input-label">Número</span>
+          <input type="text" maxlength="8" ng-model="user.number" required>
+        </label>
+        <label class="item item-input" ng-if="cep.$present">
+          <span class="input-label">Complemento</span>
+          <input type="text" maxlength="20" ng-model="user.complement">
+        </label>          
+      </div>
+
+      <div class="button-bar">
+        <button class="button button-calm" type="submit">
+          Salvar Informações
+        </button>
+      </div>
+    </form>   
+  </ion-content>
+</ion-view>

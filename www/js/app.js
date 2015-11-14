@@ -32,17 +32,29 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   $stateProvider
   
   // setup an abstract state for the tabs directive
-  .state('login', {
+  .state('signin', {
     url: '/',
-    templateUrl: 'templates/login.html',
-    controller: 'LoginCtrl'
+    templateUrl: 'templates/signin.html',
+    controller: 'SignInCtrl'
   })
 
-  // setup an abstract state for the tabs directive
-  .state('admin', {
-    url: '/admin',
+
+  .state('signup', {
+    url: '/signup',
+    templateUrl: 'templates/config/signup.html',
+    controller: 'SignUpCtrl'
+  })
+
+  .state('schedule', {
+    url: '/schedule',
+    templateUrl: 'templates/config/schedule.html',
+    controller: 'ScheduleCtrl'
+  })
+
+  .state('owner', {
+    url: '/owner',
     abstract: true,
-    templateUrl: 'templates/admin/tabs.html',
+    templateUrl: 'templates/owner/tabs.html',
     resolve: {
       auth: function($auth) {
         return $auth.validateUser();
@@ -50,14 +62,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
 
-  .state('admin.dash', {
+  .state('owner.dash', {
     url: '/dash',
-    views: {
-      'admin.dash': {
-        templateUrl: 'templates/admin/dash.html',
-        controller: 'DashCtrl'
-      }
-    }
+    templateUrl: 'templates/owner/dash.html',
+    controller: 'DashCtrl'
   });
 
   // if none of the above states are matched, use this as the fallback

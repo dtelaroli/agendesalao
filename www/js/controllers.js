@@ -8,29 +8,68 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     });
 })
 
-.controller('LoginCtrl', function($scope, $auth, $state, CepService, UserService) {
-
-  $scope.user = new UserService({$logged: false});
-  $scope.cep = {value: '', $present: false};
+.controller('SignInCtrl', function($scope, $auth, $state) {
+  $scope.user = {};
 
   $auth.validateUser().then(function(user) {
-    $scope.user = angular.extend($scope.user, user);
-    $scope.user.$logged = true;
-    // $state.go('admin.dash');
+    login(user);
   });
 
   $scope.login = function(provider) {
     $auth.authenticate(provider)
-      .then(function(resp) {
-        $scope.user = angular.extend($scope.user, resp);
-        $scope.user.$logged = true;
-        // $state.go('admin.dash');
+      .then(function(user) {
+        login(user);
       })
       .catch(function(resp) {
         alert('Erro');
       });
   };
 
+  function login(user) {
+    console.log(user);
+    $scope.user = angular.extend($scope.user, user);
+    $scope.user.$logged = true;
+    if($scope.user.cpf === undefined) {
+      $state.go('signup');
+    }
+    else {
+     $state.go('owner.dash');
+    }
+  }
+})
+
+.controller('SignUpCtrl', function($scope, $state, $auth, CepService, UserService) {
+  $scope.user = new UserService();
+  $auth.validateUser().then(function(user) {
+    console.log(user);
+    $scope.user = angular.extend($scope.user, user);
+    if($scope.user.cpf !== undefined) {
+      $state.go('owner.dash');
+    }
+  });
+  $scope.cep = {value: '', $present: false};
+
+  $scope.$watch('cep.value', function(cep) {
+    if($scope.cep.value.length == 8) {
+      CepService.get({cep: $scope.cep.value}, function(address) {
+        $scope.cep.$present = true;
+        $scope.user.address = address.logradouro + ' ' + address.complemento + ', ' + address.bairro + ' - ' + address.localidade + ' / ' + address.uf;
+        $scope.user = angular.extend($scope.user, address);
+      });
+    }
+  });
+
+  $scope.registry = function() {
+    $scope.user.$save(function(result) {
+      console.log(result);
+      $state.go('schedule');
+    }, function(error) {
+      console.error(error);
+    });
+  };
+})
+
+.controller('ScheduleCtrl', function($scope, $state, $auth, UserService) {
   function createDateObj(hour) {
     var obj = {
       inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
@@ -82,23 +121,14 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     $scope.day.selected = $scope.days[0];
   };
 
-  $scope.$watch('cep.value', function(cep) {
-    if($scope.cep.value.length == 8) {
-      CepService.get({cep: $scope.cep.value}, function(address) {
-        $scope.cep.$present = true;
-        $scope.user.address = address.logradouro + ' ' + address.complemento + ', ' + address.bairro + ' - ' + address.localidade + ' / ' + address.uf;
-        $scope.user = angular.extend($scope.user, address);
-      });
-    }
-  });
-
   $scope.registry = function() {
-    $scope.user.$save(function(result) {
+    UserService.save(function(result) {
       console.log(result);
     }, function(error) {
       console.error(error);
     });
   };
+
 })
 
 .controller('DashCtrl', function($scope, $auth) {
