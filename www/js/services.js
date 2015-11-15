@@ -8,6 +8,10 @@ angular.module('starter.services', ['ngResource'])
   });
 })
 
-.factory('UserService', function($resource) {
-  return $resource('http://localhost:3000/users/:action.:format', {format: 'json'});
+.factory('ProfileService', function($resource) {
+  return $resource('http://localhost:3000/profiles/:id.:format', {format: 'json'}, {
+    update: {
+      method: 'PUT'
+    }
+  });
 });

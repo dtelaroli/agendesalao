@@ -1,67 +1,90 @@
 angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
 
 .config(function($authProvider) {
-    $authProvider.configure({
+    $authProvider.configure([{
+      default: {
+        apiUrl: 'http://localhost:3000',
+        storage: 'localStorage',
+        omniauthWindowType: 'newWindow',
+        signOutUrl:            '/owner_auth/sign_out',
+        accountUpdatePath:     '/owner_auth',
+        accountDeletePath:     '/owner_auth',
+        tokenValidationPath:   '/owner_auth/validate_token',
+        authProviderPaths: {
+          facebook:  '/owner_auth/facebook',
+          google:    '/owner_auth/google_oauth2'
+        }
+      }
+    }, {
+      end: {
         apiUrl: 'http://localhost:3000',
         storage: 'localStorage',
         omniauthWindowType: 'newWindow'
-    });
+      }
+    }
+  ]);
 })
 
 .controller('SignInCtrl', function($scope, $auth, $state) {
   $scope.user = {};
 
   $auth.validateUser().then(function(user) {
-    login(user);
+    $scope._login(user);
   });
 
   $scope.login = function(provider) {
     $auth.authenticate(provider)
       .then(function(user) {
-        login(user);
+        $scope._login(user);
       })
       .catch(function(resp) {
         alert('Erro');
       });
   };
 
-  function login(user) {
-    console.log(user);
+  $scope._login = function(user) {
     $scope.user = angular.extend($scope.user, user);
     $scope.user.$logged = true;
-    if($scope.user.cpf === undefined) {
+
+    if(user.profile_id === undefined) {
       $state.go('signup');
     }
     else {
-     $state.go('owner.dash');
+     $state.go('schedule');
     }
   }
 })
 
-.controller('SignUpCtrl', function($scope, $state, $auth, CepService, UserService) {
-  $scope.user = new UserService();
+.controller('SignUpCtrl', function($scope, $state, $auth, CepService, ProfileService) {
+  $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
-    console.log(user);
-    $scope.user = angular.extend($scope.user, user);
-    if($scope.user.cpf !== undefined) {
+    $scope.profile.user = user;
+    if(user.profile_id !== undefined) {
       $state.go('owner.dash');
     }
   });
   $scope.cep = {value: '', $present: false};
 
   $scope.$watch('cep.value', function(cep) {
-    if($scope.cep.value.length == 8) {
+    if($scope.cep.value !== undefined && $scope.cep.value.length === 8) {
       CepService.get({cep: $scope.cep.value}, function(address) {
-        $scope.cep.$present = true;
-        $scope.user.address = address.logradouro + ' ' + address.complemento + ', ' + address.bairro + ' - ' + address.localidade + ' / ' + address.uf;
-        $scope.user = angular.extend($scope.user, address);
+        if(!address.erro) {
+          $scope.cep.$present = true;
+          $scope.profile = angular.extend($scope.profile, {
+            address: (address.logradouro + ' ' + address.complemento).trim(),
+            number: address.number,
+            neighborhood: address.bairro,
+            city: address.localidade,
+            state: address.uf,
+            zipcode: address.cep,
+          });
+        }
       });
     }
   });
 
   $scope.registry = function() {
-    $scope.user.$save(function(result) {
-      console.log(result);
+    $scope.profile.$save(function(result) {
       $state.go('schedule');
     }, function(error) {
       console.error(error);
@@ -69,7 +92,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   };
 })
 
-.controller('ScheduleCtrl', function($scope, $state, $auth, UserService) {
+.controller('ScheduleCtrl', function($scope, $state, $auth, ProfileService) {
   function createDateObj(hour) {
     var obj = {
       inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
