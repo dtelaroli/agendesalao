@@ -1,32 +1,31 @@
-angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
+angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
 .config(function($authProvider) {
-    $authProvider.configure([{
-      default: {
-        apiUrl: 'http://localhost:3000',
-        storage: 'localStorage',
-        omniauthWindowType: 'newWindow',
-        signOutUrl:            '/owner_auth/sign_out',
-        accountUpdatePath:     '/owner_auth',
-        accountDeletePath:     '/owner_auth',
-        tokenValidationPath:   '/owner_auth/validate_token',
-        authProviderPaths: {
-          facebook:  '/owner_auth/facebook',
-          google:    '/owner_auth/google_oauth2'
-        }
+  function createConfig(path) {
+    var isMob = false;
+    return {
+      apiUrl: 'http://localhost:3000',
+      storage: (isMob ? 'localStorage' : 'cookies'),
+      omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
+      signOutUrl: path + '/sign_out',
+      accountUpdatePath: path,
+      accountDeletePath: path,
+      tokenValidationPath: path + '/validate_token',
+      authProviderPaths: {
+        facebook: path + '/facebook',
+        google: path + '/google_oauth2'
       }
-    }, {
-      end: {
-        apiUrl: 'http://localhost:3000',
-        storage: 'localStorage',
-        omniauthWindowType: 'newWindow'
-      }
-    }
-  ]);
+    };
+  }
+
+  $authProvider.configure([{
+    default: createConfig('/owner_auth')
+  }, {
+    end: createConfig('/auth')
+  }]);
 })
 
 .controller('SignInCtrl', function($scope, $auth, $state) {
-  console.log('sdf3');
   $scope.user = {};
 
   $auth.validateUser().then(function(user) {
@@ -45,21 +44,20 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     $scope.user.$logged = true;
 
     if(user.profile_id === undefined) {
-      $state.go('signup');
+      $state.go('owner.signup');
     }
     else {
-     $state.go('schedule');
+     $state.go('owner.schedule');
     }
   }
 })
 
 .controller('SignUpCtrl', function($scope, $state, $auth, CepService, ProfileService) {
-  console.log('sdf2')
   $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
     $scope.profile.user = user;
     if(user.profile_id !== undefined) {
-      $state.go('schedule');
+      $state.go('owner.schedule');
     }
   });
   $scope.cep = {value: '', $present: false};
@@ -84,13 +82,12 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
 
   $scope.registry = function() {
     $scope.profile.$save(function(result) {
-      $state.go('schedule');
+      $state.go('owner.schedule');
     });
   };
 })
 
 .controller('ScheduleCtrl', function($scope, $state, $auth, $filter, ScheduleService) {
-  console.log('sdf')
   function createDateObj(hour) {
     var obj = {
       inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
@@ -111,7 +108,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   ScheduleService.query(function(schedules) {
     $scope.schedules = schedules;
     if(schedules.length > 0) {
-      $state.go('owner.calendar', {}, {reload: true});
+      $state.go('owner.calendar');
     }
   });
 
@@ -146,17 +143,31 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   $scope.registry = function() {    
     angular.forEach($scope.schedules, function($schedule) {
       $schedule.$save(function(schedule) {
-        $state.go('owner.calendar', {}, {reload: true});
+        $state.go('owner.calendar');
       });
     });
   };
-
 })
 
+
 .controller('CalendarCtrl', function($scope, $auth) {
-  console.log('foo')
+  $scope.eventSources = [];
+  $scope.uiConfig = {
+    calendar: {
+      defaultView: 'agendaWeek',
+      header:{
+        left: 'title',
+        center: '',
+        right: 'today agendaDay,agendaWeek,month prev,next'
+      },
+      events: [
+        {title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2015, 0, 1)},
+        {title: 'All Day Event', start: new Date(2015, 10, 2)},
+        {title: 'All Day Event', start: new Date(2015, 11, 3)}
+      ]
+    }
+  }
 })
 
 .controller('AccountCtrl', function($scope, $auth) {
-  console.log('bar')
 });;

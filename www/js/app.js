@@ -30,6 +30,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
+
+  .state('signin', {
+    url: '/',
+    templateUrl: 'templates/signin.html',
+    controller: 'SignInCtrl'
+  })
+
   .state('owner', {
     url: '/owner',
     abstract: true,
@@ -41,36 +48,36 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     }
   })
   
-  .state('signin', {
-    url: '/',
-    templateUrl: 'templates/signin.html',
-    controller: 'SignInCtrl'
-  })
-
-  .state('signup', {
+  .state('owner.signup', {
     url: '/signup',
     templateUrl: 'templates/owner/signup.html',
     controller: 'SignUpCtrl'
   })
 
-  .state('schedule', {
+  .state('owner.schedule', {
     url: '/schedule',
     templateUrl: 'templates/owner/schedule.html',
     controller: 'ScheduleCtrl'
   })
-
   
-
   .state('owner.calendar', {
     url: '/calendar',
-    templateUrl: 'templates/owner/calendar.html',
-    controller: 'CalendarCtrl'
+    views: {
+      'owner-calendar': {
+        templateUrl: 'templates/owner/calendar.html',
+        controller: 'CalendarCtrl'
+      }
+    }
   })
 
   .state('owner.account', {
     url: '/account',
-    templateUrl: 'templates/tab-account.html',
-    controller: 'AccountCtrl'
+    views: {
+      'owner-account': {
+        templateUrl: 'templates/tab-account.html',
+        controller: 'AccountCtrl'
+      }
+    }
   })
 
   // if none of the above states are matched, use this as the fallback
