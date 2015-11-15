@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.directives'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.directives', 'starter.filters'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -30,27 +30,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   // Set up the various states which the app can be in.
   // Each state's controller can be found in controllers.js
   $stateProvider
-  
-  // setup an abstract state for the tabs directive
-  .state('signin', {
-    url: '/',
-    templateUrl: 'templates/signin.html',
-    controller: 'SignInCtrl'
-  })
-
-
-  .state('signup', {
-    url: '/signup',
-    templateUrl: 'templates/config/signup.html',
-    controller: 'SignUpCtrl'
-  })
-
-  .state('schedule', {
-    url: '/schedule',
-    templateUrl: 'templates/config/schedule.html',
-    controller: 'ScheduleCtrl'
-  })
-
   .state('owner', {
     url: '/owner',
     abstract: true,
@@ -61,14 +40,40 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
       }
     }
   })
+  
+  .state('signin', {
+    url: '/',
+    templateUrl: 'templates/signin.html',
+    controller: 'SignInCtrl'
+  })
 
-  .state('owner.dash', {
-    url: '/dash',
-    templateUrl: 'templates/owner/dash.html',
-    controller: 'DashCtrl'
-  });
+  .state('signup', {
+    url: '/signup',
+    templateUrl: 'templates/owner/signup.html',
+    controller: 'SignUpCtrl'
+  })
+
+  .state('schedule', {
+    url: '/schedule',
+    templateUrl: 'templates/owner/schedule.html',
+    controller: 'ScheduleCtrl'
+  })
+
+  
+
+  .state('owner.calendar', {
+    url: '/calendar',
+    templateUrl: 'templates/owner/calendar.html',
+    controller: 'CalendarCtrl'
+  })
+
+  .state('owner.account', {
+    url: '/account',
+    templateUrl: 'templates/tab-account.html',
+    controller: 'AccountCtrl'
+  })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/owner/calendar');
 
 });

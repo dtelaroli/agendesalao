@@ -14,4 +14,12 @@ angular.module('starter.services', ['ngResource'])
       method: 'PUT'
     }
   });
-});
+})
+
+.factory('ScheduleService', function($resource) {
+  return $resource('http://localhost:3000/schedules/:id.:format', {format: 'json'}, {
+    update: {
+      method: 'PUT'
+    }
+  });
+});;

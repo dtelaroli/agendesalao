@@ -26,6 +26,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
 })
 
 .controller('SignInCtrl', function($scope, $auth, $state) {
+  console.log('sdf3');
   $scope.user = {};
 
   $auth.validateUser().then(function(user) {
@@ -36,9 +37,6 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     $auth.authenticate(provider)
       .then(function(user) {
         $scope._login(user);
-      })
-      .catch(function(resp) {
-        alert('Erro');
       });
   };
 
@@ -56,11 +54,12 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
 })
 
 .controller('SignUpCtrl', function($scope, $state, $auth, CepService, ProfileService) {
+  console.log('sdf2')
   $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
     $scope.profile.user = user;
     if(user.profile_id !== undefined) {
-      $state.go('owner.dash');
+      $state.go('schedule');
     }
   });
   $scope.cep = {value: '', $present: false};
@@ -86,13 +85,12 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   $scope.registry = function() {
     $scope.profile.$save(function(result) {
       $state.go('schedule');
-    }, function(error) {
-      console.error(error);
     });
   };
 })
 
-.controller('ScheduleCtrl', function($scope, $state, $auth, ProfileService) {
+.controller('ScheduleCtrl', function($scope, $state, $auth, $filter, ScheduleService) {
+  console.log('sdf')
   function createDateObj(hour) {
     var obj = {
       inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
@@ -109,6 +107,14 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
     return obj;
   };
 
+  $scope.schedules = [];
+  ScheduleService.query(function(schedules) {
+    $scope.schedules = schedules;
+    if(schedules.length > 0) {
+      $state.go('owner.calendar', {}, {reload: true});
+    }
+  });
+
   $scope.timeStartObj = createDateObj(9);
   $scope.timeEndObj = createDateObj(20);
 
@@ -118,42 +124,39 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker'])
   $scope.timeBreakStartObj = createDateObj(16);
   $scope.timeBreakEndObj = createDateObj(17);
 
-  $scope.days = [
-    {id: 'mon', label: 'Segunda-feira'},
-    {id: 'tue', label: 'Terça-feira'},
-    {id: 'wed', label: 'Quarta-feira'},
-    {id: 'thu', label: 'Quinta-feira'},
-    {id: 'fri', label: 'Sexta-feira'},
-    {id: 'sat', label: 'Sábado'},
-    {id: 'sun', label: 'Domingo'}
-  ];
-  $scope.day = {selected: $scope.days[0]};
+  $scope.days = $filter('day')();
+  $scope.day = {selected: 'mon'};
+  $scope.keys = Object.keys($scope.days);
 
-  $scope.hours = [];
-  $scope.addHour = function() {
-    $scope.hours.push({
+  $scope.add = function() {
+    $scope.schedules.push(new ScheduleService({
       day: $scope.day.selected,
       start: $scope.timeStartObj.inputEpochTime,
       end: $scope.timeEndObj.inputEpochTime,
       startLunch: $scope.timeLunchStartObj.inputEpochTime,
       endLunch: $scope.timeLunchEndObj.inputEpochTime,
-      startDinner: $scope.timeBreakStartObj.inputEpochTime,
-      endDinner: $scope.timeBreakEndObj.inputEpochTime
-    });
-    $scope.days.shift();
-    $scope.day.selected = $scope.days[0];
+      startBreak: $scope.timeBreakStartObj.inputEpochTime,
+      endBreak: $scope.timeBreakEndObj.inputEpochTime
+    }));
+    delete $scope.days[$scope.day.selected];
+    $scope.keys = Object.keys($scope.days);
+    $scope.day.selected = $scope.keys[0];
   };
 
-  $scope.registry = function() {
-    UserService.save(function(result) {
-      console.log(result);
-    }, function(error) {
-      console.error(error);
+  $scope.registry = function() {    
+    angular.forEach($scope.schedules, function($schedule) {
+      $schedule.$save(function(schedule) {
+        $state.go('owner.calendar', {}, {reload: true});
+      });
     });
   };
 
 })
 
-.controller('DashCtrl', function($scope, $auth) {
-  
-});
+.controller('CalendarCtrl', function($scope, $auth) {
+  console.log('foo')
+})
+
+.controller('AccountCtrl', function($scope, $auth) {
+  console.log('bar')
+});;
