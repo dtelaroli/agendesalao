@@ -2,9 +2,9 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
 
 .config(function($authProvider) {
   function createConfig(path) {
-    var isMob = false;
+    var isMob = window.cordova !== undefined;
     return {
-      apiUrl: 'http://localhost:3000',
+      apiUrl: 'https://warm-dusk-4656.herokuapp.com',
       storage: (isMob ? 'localStorage' : 'cookies'),
       omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
       signOutUrl: path + '/sign_out',
@@ -36,6 +36,9 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
     $auth.authenticate(provider)
       .then(function(user) {
         $scope._login(user);
+      })
+      .catch(function(error) {
+        alert('error' + error);
       });
   };
 
@@ -150,15 +153,17 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
 })
 
 
-.controller('CalendarCtrl', function($scope, $auth) {
+.controller('CalendarCtrl', function($scope, $auth, uiCalendarConfig) {
   $scope.eventSources = [];
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
+      height: 400,
+      editable: true,
       header:{
         left: 'title',
         center: '',
-        right: 'today agendaDay,agendaWeek,month prev,next'
+        right: 'today agendaDay,agendaWeek,month'
       },
       events: [
         {title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2015, 0, 1)},
@@ -166,8 +171,16 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
         {title: 'All Day Event', start: new Date(2015, 11, 3)}
       ]
     }
-  }
+  };
+
+  $scope.left = function() {
+    $(uiCalendarConfig.calendars.monthly).fullCalendar('next');
+  };
+
+  $scope.right = function() {
+    $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
+  };
 })
 
 .controller('AccountCtrl', function($scope, $auth) {
-});;
+});

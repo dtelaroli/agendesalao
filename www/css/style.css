@@ -35,3 +35,16 @@
 .item strong {
   font-weight: normal
 }
+
+.fc-toolbar h2 {
+  font-size: 14px;
+  margin-top: 6px;
+}
+.fc button {
+  height: auto;
+  font-size: 0.8em;
+  padding: 0.4em 0.5em;
+}
+.fc table {
+  font-size: 0.9em;
+}
