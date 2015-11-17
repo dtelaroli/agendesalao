@@ -1,4 +1,4 @@
-angular.module('starter.filters', [])
+angular.module('owner.filters', [])
 
 .filter('day', function() {
   return function(day) {

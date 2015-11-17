@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('owner', ['ionic', 'owner.controllers', 'owner.directives', 'owner.filters'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -14,6 +14,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       cordova.plugins.Keyboard.disableScroll(true);
+
     }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
@@ -30,12 +31,65 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   // Each state's controller can be found in controllers.js
   $stateProvider
 
-  .state('selector', {
+  .state('login', {
     url: '/',
-    templateUrl: 'templates/selector.html',
-    controller: 'SelectorCtrl'
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
+  })
+
+  .state('owner', {
+    url: '/owner',
+    abstract: true,
+    templateUrl: 'templates/owner/tabs.html',
+    resolve: {
+      auth: function($auth, $state) {
+        return $auth.validateUser().catch(function() {
+          $state.go('login');
+        });
+      }
+    }
+  })
+  
+  .state('owner.signup', {
+    url: '/signup',
+    views: {
+      'owner-signup': {
+        templateUrl: 'templates/owner/signup.html',
+        controller: 'SignUpCtrl'
+      }
+    }
+  })
+
+  .state('owner.schedule', {
+    url: '/schedule',
+    views: {
+      'owner-schedule': {
+        templateUrl: 'templates/owner/schedule.html',
+        controller: 'ScheduleCtrl'
+      }
+    }
+  })
+  
+  .state('owner.calendar', {
+    url: '/calendar',
+    views: {
+      'owner-calendar': {
+        templateUrl: 'templates/owner/calendar.html',
+        controller: 'CalendarCtrl'
+      }
+    }
+  })
+
+  .state('owner.account', {
+    url: '/account',
+    views: {
+      'owner-account': {
+        templateUrl: 'templates/tab-account.html',
+        controller: 'AccountCtrl'
+      }
+    }
   })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/owner/calendar');
 });
