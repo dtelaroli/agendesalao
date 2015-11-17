@@ -41,20 +41,20 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     url: '/owner',
     abstract: true,
     templateUrl: 'templates/owner/tabs.html',
-    resolve: {
-      auth: function($auth) {
-        return $auth.validateUser();
-      }
-    }
+    // resolve: {
+    //   auth: function($auth) {
+    //     return $auth.validateUser();
+    //   }
+    // }
   })
   
-  .state('owner.signup', {
+  .state('signup', {
     url: '/signup',
     templateUrl: 'templates/owner/signup.html',
     controller: 'SignUpCtrl'
   })
 
-  .state('owner.schedule', {
+  .state('schedule', {
     url: '/schedule',
     templateUrl: 'templates/owner/schedule.html',
     controller: 'ScheduleCtrl'
@@ -81,6 +81,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/owner/calendar');
+  $urlRouterProvider.otherwise('/');
 
 });

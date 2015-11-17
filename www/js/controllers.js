@@ -45,12 +45,11 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
   $scope._login = function(user) {
     $scope.user = angular.extend($scope.user, user);
     $scope.user.$logged = true;
-
-    if(user.profile_id === undefined) {
-      $state.go('owner.signup');
+    if(user.profile_id === null) {
+      $state.go('signup');
     }
     else {
-     $state.go('owner.schedule');
+     $state.go('schedule');
     }
   }
 })
@@ -59,8 +58,8 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
   $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
     $scope.profile.user = user;
-    if(user.profile_id !== undefined) {
-      $state.go('owner.schedule');
+    if(user.profile_id !== null) {
+      $state.go('schedule');
     }
   });
   $scope.cep = {value: '', $present: false};
@@ -85,7 +84,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
 
   $scope.registry = function() {
     $scope.profile.$save(function(result) {
-      $state.go('owner.schedule');
+      $state.go('schedule');
     });
   };
 })
@@ -106,7 +105,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
     };
     return obj;
   };
-
+console.log('sdlkfsdlk')
   $scope.schedules = [];
   ScheduleService.query(function(schedules) {
     $scope.schedules = schedules;
