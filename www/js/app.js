@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'starter.directives', 'starter.filters'])
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives', 'starter.filters'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -41,23 +41,33 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     url: '/owner',
     abstract: true,
     templateUrl: 'templates/owner/tabs.html',
-    // resolve: {
-    //   auth: function($auth) {
-    //     return $auth.validateUser();
-    //   }
-    // }
+    resolve: {
+      auth: function($auth, $state) {
+        return $auth.validateUser().catch(function() {
+          $state.go('signin');
+        });
+      }
+    }
   })
   
-  .state('signup', {
+  .state('owner.signup', {
     url: '/signup',
-    templateUrl: 'templates/owner/signup.html',
-    controller: 'SignUpCtrl'
+    views: {
+      'owner-signup': {
+        templateUrl: 'templates/owner/signup.html',
+        controller: 'SignUpCtrl'
+      }
+    }
   })
 
-  .state('schedule', {
+  .state('owner.schedule', {
     url: '/schedule',
-    templateUrl: 'templates/owner/schedule.html',
-    controller: 'ScheduleCtrl'
+    views: {
+      'owner-schedule': {
+        templateUrl: 'templates/owner/schedule.html',
+        controller: 'ScheduleCtrl'
+      }
+    }
   })
   
   .state('owner.calendar', {
@@ -81,6 +91,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/');
-
+  $urlRouterProvider.otherwise('/owner/calendar');
 });

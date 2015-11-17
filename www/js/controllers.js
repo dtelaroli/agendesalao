@@ -1,25 +1,25 @@
-angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
+angular.module('starter.controllers', ['starter.services', 'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
-.config(function($authProvider) {
+.config(function($authProvider, CONFIGProvider) {
   function createConfig(path) {
     var isMob = window.cordova !== undefined;
     return {
-      apiUrl: 'https://warm-dusk-4656.herokuapp.com',
+      apiUrl: CONFIGProvider.$get().host,
       storage: (isMob ? 'localStorage' : 'cookies'),
       omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
-      signOutUrl: path + '/sign_out',
-      accountUpdatePath: path,
-      accountDeletePath: path,
-      tokenValidationPath: path + '/validate_token',
+      signOutUrl: path + '/auth/sign_out',
+      accountUpdatePath: '/auth',
+      accountDeletePath: '/auth',
+      tokenValidationPath: '/auth/validate_token',
       authProviderPaths: {
-        facebook: path + '/facebook',
-        google: path + '/google_oauth2'
+        facebook: '/auth/facebook',
+        google: '/auth/google_oauth2'
       }
     };
   }
 
   $authProvider.configure([{
-    default: createConfig('/owner_auth')
+    default: createConfig('/owner/auth')
   }, {
     end: createConfig('/auth')
   }]);
@@ -28,28 +28,20 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
 .controller('SignInCtrl', function($scope, $auth, $state) {
   $scope.user = {};
 
-  $auth.validateUser().then(function(user) {
-    $scope._login(user);
-  });
-
   $scope.login = function(provider) {
-    $auth.authenticate(provider)
-      .then(function(user) {
+    $auth.authenticate(provider).then(function(user) {
         $scope._login(user);
-      })
-      .catch(function(error) {
+      }).catch(function(error) {
         alert('error' + error);
       });
   };
 
   $scope._login = function(user) {
-    $scope.user = angular.extend($scope.user, user);
-    $scope.user.$logged = true;
+    $scope.user = user;
     if(user.profile_id === null) {
-      $state.go('signup');
-    }
-    else {
-     $state.go('schedule');
+      $state.go('owner.signup');
+    } else {
+      $state.go('owner.schedule');
     }
   }
 })
@@ -58,9 +50,6 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
   $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
     $scope.profile.user = user;
-    if(user.profile_id !== null) {
-      $state.go('schedule');
-    }
   });
   $scope.cep = {value: '', $present: false};
 
@@ -84,7 +73,7 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
 
   $scope.registry = function() {
     $scope.profile.$save(function(result) {
-      $state.go('schedule');
+      $state.go('owner.schedule');
     });
   };
 })
@@ -105,7 +94,6 @@ angular.module('starter.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.
     };
     return obj;
   };
-console.log('sdlkfsdlk')
   $scope.schedules = [];
   ScheduleService.query(function(schedules) {
     $scope.schedules = schedules;
@@ -152,20 +140,21 @@ console.log('sdlkfsdlk')
 })
 
 
-.controller('CalendarCtrl', function($scope, $auth, uiCalendarConfig) {
+.controller('CalendarCtrl', function($scope, $state, $auth, uiCalendarConfig) {
   $scope.eventSources = [];
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
       height: 400,
       editable: true,
+      lang: 'pt-br',
       header:{
         left: 'title',
         center: '',
         right: 'today agendaDay,agendaWeek,month'
       },
       events: [
-        {title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2015, 0, 1)},
+        {title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2016, 5, 1)},
         {title: 'All Day Event', start: new Date(2015, 10, 2)},
         {title: 'All Day Event', start: new Date(2015, 11, 3)}
       ]
@@ -182,4 +171,5 @@ console.log('sdlkfsdlk')
 })
 
 .controller('AccountCtrl', function($scope, $auth) {
+
 });

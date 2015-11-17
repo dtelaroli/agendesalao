@@ -1,8 +1,9 @@
 angular.module('starter.services', ['ngResource'])
 
-.factory('API', function() {
+.factory('CONFIG', function() {
   return {
-    host: 'https://warm-dusk-4656.herokuapp.com'
+    // host: 'https://warm-dusk-4656.herokuapp.com/owner'
+    host: 'http://localhost:3000/owner'
   };
 })
 
@@ -14,18 +15,18 @@ angular.module('starter.services', ['ngResource'])
   });
 })
 
-.factory('ProfileService', function($resource, API) {
-  return $resource(API.host + '/profiles/:id.:format', {format: 'json'}, {
+.factory('ProfileService', function($resource, CONFIG) {
+  return $resource(CONFIG.host + '/profiles/:id.:format', {format: 'json'}, {
     update: {
       method: 'PUT'
     }
   });
 })
 
-.factory('ScheduleService', function($resource, API) {
-  return $resource(API.host + '/schedules/:id.:format', {format: 'json'}, {
+.factory('ScheduleService', function($resource, CONFIG) {
+  return $resource(CONFIG.host + '/schedules/:id.:format', {format: 'json'}, {
     update: {
       method: 'PUT'
     }
   });
-});;
+});
