@@ -1,4 +1,4 @@
-angular.module('owner.directives', [])
+angular.module('owner.directives', ['owner.directives'])
 
 .directive('standardTimeNoMeridian', function() {
   return {
@@ -40,7 +40,7 @@ angular.module('owner.directives', [])
   };
 })
 
-.directive('ionicAutocomplete', function ($ionicPopover, $resource) {
+.directive('ionicAutocomplete', function ($ionicPopover, ProfileService) {
   var popoverTemplate = 
    '<ion-popover-view style="margin-top:5px">' + 
        '<ion-content>' +
@@ -61,12 +61,9 @@ angular.module('owner.directives', [])
           $scope.items = [];
 
           $($element).keyup(function() {
-              if($scope.inputSearch.length > 1) {
-                  var ProfileService = new $resource('https://warm-dusk-4656.herokuapp.com/owner/profiles.json');
-                  ProfileService.query({q: $scope.inputSearch}, function(profiles) {
-                      $scope.items = profiles;
-                  })
-              }
+              ProfileService.query({q: $scope.inputSearch}, function(profiles) {
+                  $scope.items = profiles;
+              });
           });
 
           //Add autocorrect="off" so the 'change' event is detected when user tap the keyboard
@@ -76,15 +73,16 @@ angular.module('owner.directives', [])
           popover = $ionicPopover.fromTemplate(popoverTemplate, {
               scope: $scope
           });
-          $element.on('focus', function (e) {
-              if (!popoverShown) {
-                  popover.show(e);
+          $scope.$watch('items', function (items) {
+              if (!popoverShown && items.length > 0) {
+                  popover.show($element);
               }
           });
 
           $scope.selectItem = function (item) {
               $element.val(item.display);
               popover.hide();
+              var popoverShown = false;
               $scope.params.onSelect(item);
           };
       }
