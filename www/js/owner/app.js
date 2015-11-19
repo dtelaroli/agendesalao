@@ -50,12 +50,12 @@ angular.module('owner', ['ionic', 'owner.controllers', 'owner.directives', 'owne
     }
   })
   
-  .state('owner.signup', {
-    url: '/signup',
+  .state('owner.profile', {
+    url: '/profile',
     views: {
-      'owner-signup': {
-        templateUrl: 'templates/owner/signup.html',
-        controller: 'SignUpCtrl'
+      'owner-profile': {
+        templateUrl: 'templates/owner/profile.html',
+        controller: 'ProfileCtrl'
       }
     }
   })

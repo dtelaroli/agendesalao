@@ -1,12 +1,11 @@
 angular.module('owner.controllers', ['starter.configs', 'owner.services', 
-  'ng-token-auth', 'ionic-timepicker', 'ui.calendar', 'ion-autocomplete', 
-  'autocomplete.directive'])
+  'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
 .config(function($authProvider, $configProvider) {
   var isMob = window.cordova !== undefined;
 
   $authProvider.configure({
-    apiUrl: $configProvider.$get().host + '/owner',
+    apiUrl: $configProvider.$get().host,
     storage: (isMob ? 'localStorage' : 'cookies'),
     omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
     signOutUrl: '/auth/sign_out',
@@ -34,14 +33,14 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
   $scope._login = function(user) {
     $scope.user = user;
     if(user.profile_id === null) {
-      $state.go('owner.signup');
+      $state.go('owner.profile');
     } else {
       $state.go('owner.schedule');
     }
   }
 })
 
-.controller('SignUpCtrl', function($scope, $state, $auth, CepService, ProfileService) {
+.controller('ProfileCtrl', function($scope, $state, $auth, CepService, ProfileService) {
   $scope.profile = new ProfileService();
   $auth.validateUser().then(function(user) {
     $scope.profile.user = user;
@@ -136,6 +135,12 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
 
 
 .controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, uiCalendarConfig) {
+  $auth.validateUser().then(function(user) {
+    if(user.profile_id === null) {
+      $state.go('owner.profile');
+    }
+  });
+
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
     $scope.modal = modal;
   });
@@ -165,14 +170,8 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
     }
   };
 
-  $scope.$watch('modal.q', function(q) {
-    if(q !== undefined && q.length > 2) {
-      console.log(q);
-    }
-  });
-
   $scope.selectClient = function(item) {
-    console.log(item);
+    $scope.modal.selected = item;
   };
 
   $scope.close = function() {

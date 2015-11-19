@@ -8,7 +8,6 @@
     "ng-token-auth": "~0.0.28",
     "angular-resource": "~1.4.7",
     "ionic-timepicker": "~0.4.0",
-    "angular-ui-calendar": "~1.0.1",
-    "ionic-autocomplete": "*"
+    "angular-ui-calendar": "~1.0.1"
   }
 }
