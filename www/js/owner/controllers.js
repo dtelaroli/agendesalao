@@ -1,4 +1,6 @@
-angular.module('owner.controllers', ['starter.configs', 'owner.services', 'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
+angular.module('owner.controllers', ['starter.configs', 'owner.services', 
+  'ng-token-auth', 'ionic-timepicker', 'ui.calendar', 'ion-autocomplete', 
+  'autocomplete.directive'])
 
 .config(function($authProvider, $configProvider) {
   var isMob = window.cordova !== undefined;
@@ -133,26 +135,48 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services', 'ng-to
 })
 
 
-.controller('CalendarCtrl', function($scope, $state, $auth, uiCalendarConfig) {
+.controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, uiCalendarConfig) {
+  $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
+    $scope.modal = modal;
+  });
   $scope.eventSources = [];
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
       height: 400,
-      editable: true,
       allDaySlot: false,
       lang: 'pt-br',
+      timezone: 'local',
       header:{
         left: 'title',
         right: 'today agendaDay,agendaWeek,month'
       },
-      dayClick: function(e) {
-        console.log(e)
+      dayClick: function(date, jsEvent, view) {
+        if (view.name === 'agendaDay') {
+          $scope.modal.date = date.toDate();
+          $scope.modal.show();
+        } else {
+          $(uiCalendarConfig.calendars.monthly).fullCalendar('gotoDate', date);
+          $(uiCalendarConfig.calendars.monthly).fullCalendar('changeView', 'agendaDay');
+        }
       },
       eventClick: function(e) {
-        console.log(e)
       }
     }
+  };
+
+  $scope.$watch('modal.q', function(q) {
+    if(q !== undefined && q.length > 2) {
+      console.log(q);
+    }
+  });
+
+  $scope.selectClient = function(item) {
+    console.log(item);
+  };
+
+  $scope.close = function() {
+    $scope.modal.hide();
   };
 
   $scope.uiConfig.calendar.defaultView = 'agendaWeek';

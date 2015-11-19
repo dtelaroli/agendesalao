@@ -33,7 +33,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   .state('selector', {
     url: '/',
     templateUrl: 'templates/selector.html',
-    controller: 'SelectorCtrl'
+    controller: 'UserTypeCtrl'
   })
 
   // if none of the above states are matched, use this as the fallback
