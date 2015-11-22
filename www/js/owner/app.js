@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('owner', ['ionic', 'owner.controllers', 'owner.directives', 'owner.filters'])
+angular.module('owner', ['ionic', 'owner.controllers', 'shared.directives', 'shared.filters'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -40,7 +40,7 @@ angular.module('owner', ['ionic', 'owner.controllers', 'owner.directives', 'owne
   .state('owner', {
     url: '/owner',
     abstract: true,
-    templateUrl: 'templates/owner/tabs.html',
+    templateUrl: 'templates/owner/menu.html',
     resolve: {
       auth: function($auth, $state) {
         return $auth.validateUser().catch(function() {

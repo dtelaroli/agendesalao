@@ -1,0 +1,36 @@
+<ion-side-menus enable-menu-with-back-views="false">
+  <ion-side-menu-content drag-content="false">
+    <ion-nav-bar class="bar-stable">
+      <ion-nav-back-button></ion-nav-back-button>
+      <ion-nav-buttons side="left">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="left"></button>
+      </ion-nav-buttons>
+    </ion-nav-bar>
+    <ion-nav-view name="owner-calendar"></ion-nav-view>
+    <ion-nav-view name="owner-profile"></ion-nav-view>
+    <ion-nav-view name="owner-schedule"></ion-nav-view>
+    <ion-nav-view name="owner-account"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="left">
+    <ion-header-bar class="bar-stable">
+      <h1 class="title">Agende Salão</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        <ion-item menu-close href="#/owner/calendar">
+          Minha Agenda
+        </ion-item>
+        <ion-item menu-close href="#/owner/profile">
+          Perfil
+        </ion-item>
+        <ion-item menu-close href="#/owner/schedule">
+          Horários
+        </ion-item>
+        <ion-item menu-close href="/#/signout">
+          Sair
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>

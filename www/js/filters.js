@@ -1,4 +1,4 @@
-angular.module('owner.filters', [])
+angular.module('shared.filters', [])
 
 .filter('day', function() {
   return function(day) {

@@ -1,5 +1,4 @@
-angular.module('owner.controllers', ['starter.configs', 'owner.services', 
-  'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
+angular.module('owner.controllers', ['shared.configs', 'shared.services', 'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
 .config(function($authProvider, $configProvider) {
   var isMob = window.cordova !== undefined;
@@ -125,10 +124,8 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
   };
 
   $scope.registry = function() {    
-    angular.forEach($scope.schedules, function($schedule) {
-      $schedule.$save(function(schedule) {
-        $state.go('owner.calendar');
-      });
+    ScheduleService.saveAll({items: $scope.schedules}, function(schedule) {
+      $state.go('owner.calendar');
     });
   };
 })
@@ -152,6 +149,10 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
       allDaySlot: false,
       lang: 'pt-br',
       timezone: 'local',
+      minTime: '10:00',
+      maxTime: '18:00',
+      slotDuration: '00:20',
+      hiddenDays: [0],
       header:{
         left: 'title',
         right: 'today agendaDay,agendaWeek,month'
@@ -192,6 +193,10 @@ angular.module('owner.controllers', ['starter.configs', 'owner.services',
   $scope.right = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
   };
+})
+
+.controller('ModalCtrl', function($scope) {
+  $scope.title = 'Agendar Cliente';
 })
 
 .controller('AccountCtrl', function($scope, $auth) {

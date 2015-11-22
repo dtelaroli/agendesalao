@@ -1,4 +1,7 @@
 /* Empty. Add your own CSS if you like */
+a {
+  cursor: pointer;
+}
 
 .item-select select {
   top: 1px;
@@ -47,4 +50,9 @@
 }
 .fc table {
   font-size: 0.9em;
+}
+
+.right {
+  position: absolute;
+  right: 25px;
 }

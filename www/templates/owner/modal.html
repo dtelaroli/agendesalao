@@ -1,18 +1,23 @@
-<ion-modal-view>
+<ion-modal-view ng-controller="ModalCtrl">
   <ion-header-bar>
-    <h1 class="title">Agendar Cliente</h1>
+    <h1 class="title">{{title}}</h1>
   </ion-header-bar>
   <ion-content class="padding">
     <div class="list">
-      <label class="item item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" autocomplete="off" max-selected-items="1" ionic-autocomplete="{onSelect: selectClient}" ng-model="modal.selected.name" placeholder="Procurar cliente"/>
+      <ion-toggle ng-model="newClient" toggle-class="toggle-calm">Cliente Novo?</ion-toggle>
+      <label class="item item-input" ng-if="newClient">
+        <i class="icon ion-person-add placeholder-icon"></i>
+        <input type="email" ng-model="modal.selected.name" placeholder="Convidar Cliente por Email"/>
       </label>
+      <label class="item item-input" ng-if="!newClient">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" autocomplete="off" max-selected-items="1" ionic-autocomplete="{onSelect: selectClient}" ng-model="modal.selected.name" placeholder="Procurar Cliente Cadastrado"/>
+      </label>   
 
       <label class="item item-input">
         <span class="input-label">Horário:</span>
         {{modal.date | date:"dd/MM/yyyy 'às' HH:mm'h'"}}
-      </label>      
+      </label>
     </div>
     <div class="button-bar">
       <button class="button button-block button-calm" ng-click="schedule()">

@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('shared.controllers', [])
 
 .controller('UserTypeCtrl', function($scope, $window) {
   $scope.redirect = function(href) {
