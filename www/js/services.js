@@ -1,16 +1,4 @@
-angular.module('shared.services', ['ngResource'])
-
-.factory('$data', function() {
-  var data = {};
-  return {
-    set: function(key, value) {
-      data[key] = value;
-    },
-    get: function(key) {
-      return data[key];
-    }
-  };
-})
+angular.module('shared.services', ['ngResource', 'shared.configs'])
 
 .factory('CepService', function($resource) {
   return $resource('https://viacep.com.br/ws/:cep/json/unicode', {}, {
@@ -21,7 +9,7 @@ angular.module('shared.services', ['ngResource'])
 })
 
 .factory('ProfileService', function($resource, $config) {
-  return $resource($config.host + '/profiles/:id.:format', {format: 'json'}, {
+  return $resource($config.host() + '/profiles/:id.:format', {format: 'json'}, {
     update: {
       method: 'PUT'
     }
@@ -29,7 +17,7 @@ angular.module('shared.services', ['ngResource'])
 })
 
 .factory('ScheduleService', function($resource, $config) {
-  return $resource($config.host + '/schedules/:id.:format', {format: 'json'}, {
+  return $resource($config.host() + '/schedules/:id.:format', {format: 'json'}, {
     saveAll: {
       method: 'POST',
       isArray: true
@@ -38,4 +26,23 @@ angular.module('shared.services', ['ngResource'])
       method: 'PUT'
     }
   });
+})
+
+.factory('$authConfig', function($config) {
+  var isMob = window.cordova !== undefined;
+  return function(module) {
+    return {
+      apiUrl: $config.auth(module),
+      storage: (isMob ? 'localStorage' : 'cookies'),
+      omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
+      signOutUrl: '/auth/sign_out',
+      accountUpdatePath: '/auth',
+      accountDeletePath: '/auth',
+      tokenValidationPath: '/auth/validate_token',
+      authProviderPaths: {
+        facebook: '/auth/facebook',
+        google: '/auth/google_oauth2'
+      }
+    }
+  };
 });

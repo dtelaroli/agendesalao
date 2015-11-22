@@ -4,45 +4,74 @@
       <div class="item item-divider">Cadastro</div>
       <div class="item item-body">
         <div>
-          Olá {{profile.user.name}}, é necessário completar seu cadastro para poder receber agendamentos na sua conta.
+          Olá {{owner.name}}, é necessário que você mantenha seus dados profissionais atualizados para que seus clientes possam agendar corretamente horários de atendimento e te encontrar mais facilmente.
         </div>
       </div>
     </div>
     <form name="userData" novalidate ng-submit="registry()">
       <div class="list card">
         <div class="item item-divider">Dados profissionais</div>
-        <label class="item item-input">
+        <label class="item item-input right-align">
           <span class="input-label">Empresa</span>
           <input type="text" maxlength="30" ng-model="profile.name" required>
         </label>
         <label class="item item-input">
-          <span class="input-label">Serviços</span>
+          <span class="input-label right-align">Serviços</span>
           <textarea ng-model="profile.description" rows="4" required></textarea>
         </label>
         <label class="item item-input">
-          <span class="input-label">CPF</span>
+          <span class="input-label right-align">CPF</span>
           <input type="text" maxlength="11" ng-model="profile.cpf" required>
         </label>
         <label class="item item-input">
-          <span class="input-label">Celular</span>
+          <span class="input-label right-align">Celular</span>
           <input type="tel" maxlength="11" ng-model="profile.mobile" required>
         </label>
         <label class="item item-input">
-          <span class="input-label">CEP</span>
+          <span class="input-label right-align">CEP</span>
           <input type="text" maxlength="8" ng-model="cep.value" required>
         </label>
         <div class="item item-input item-body" ng-if="cep.$present">
-          <span class="input-label">Endereço</span>
+          <span class="input-label right-align">Endereço</span>
           {{profile.address}}
         </div>
         <label class="item item-input" ng-if="cep.$present">
-          <span class="input-label">Número</span>
+          <span class="input-label right-align">Número</span>
           <input type="text" maxlength="8" ng-model="profile.number" required>
         </label>
         <label class="item item-input" ng-if="cep.$present">
-          <span class="input-label">Complemento</span>
+          <span class="input-label right-align">Complemento</span>
           <input type="text" maxlength="20" ng-model="profile.complement">
         </label>          
+      </div>
+
+      <div class="list card">
+        <div class="item item-divider">
+          Horários de trabalho
+        </div>
+
+        <div class="item item-input item-time-content">
+          <span class="input-label">Expediente</span>
+          <ionic-timepicker input-obj="timeEnd" class="item-time">
+            <button class="button button-light">
+              <standard-time-no-meridian etime='timeEnd.inputEpochTime'></standard-time-no-meridian>
+            </button>
+          </ionic-timepicker>
+          <span class="item-time separator">/</span>
+          <ionic-timepicker input-obj="timeStart" class="item-time">
+            <button class="button button-light">
+              <standard-time-no-meridian etime='timeStart.inputEpochTime'></standard-time-no-meridian>
+            </button>
+          </ionic-timepicker>
+        </div>
+
+        <ion-checkbox ng-model="profile.owner.mon">Segunda-feira</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.tue">Terça-feira</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.wed">Quarta-feira</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.thu">Quinta-feira</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.fri">Sexta-feira</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.sat">Sábado</ion-checkbox>
+        <ion-checkbox ng-model="profile.owner.sun">Domingo</ion-checkbox>
       </div>
 
       <div class="button-bar">

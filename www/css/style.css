@@ -17,6 +17,10 @@ a {
   float: left;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .item-time {
   position: relative;
   float: right;
@@ -34,8 +38,7 @@ a {
   margin-top: 7px;
 }
 
-.list.hours
-.item strong {
+.list.hours .item strong {
   font-weight: normal
 }
 
@@ -55,4 +58,9 @@ a {
 .right {
   position: absolute;
   right: 25px;
+}
+
+.input-label.right-align {
+  min-width: 27%;
+  display: inline-block;
 }

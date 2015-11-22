@@ -1,50 +1,56 @@
-angular.module('owner.controllers', ['shared.configs', 'shared.services', 'ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
+angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
-.config(function($authProvider, $configProvider) {
-  var isMob = window.cordova !== undefined;
-
-  $authProvider.configure({
-    apiUrl: $configProvider.$get().host,
-    storage: (isMob ? 'localStorage' : 'cookies'),
-    omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
-    signOutUrl: '/auth/sign_out',
-    accountUpdatePath: '/auth',
-    accountDeletePath: '/auth',
-    tokenValidationPath: '/auth/validate_token',
-    authProviderPaths: {
-      facebook: '/auth/facebook',
-      google: '/auth/google_oauth2'
-    }
-  });
+.config(function($authProvider, $configProvider, $authConfigProvider) {
+  var config = $authConfigProvider.$get()('/owner');
+  $authProvider.configure(config);
 })
 
-.controller('LoginCtrl', function($scope, $auth, $state) {
+.controller('LoginCtrl', function($scope, $auth, $state, $config) {
   $scope.user = {};
 
   $scope.login = function(provider) {
-    $auth.authenticate(provider).then(function(user) {
-        $scope._login(user);
-      }).catch(function(error) {
-        alert('error' + error);
-      });
+    $auth.authenticate(provider).then(function(owner) {
+      $scope.owner = owner;
+      $config.set('owner', owner);
+      
+      if(owner.profile_id === null) {
+        $state.go('owner.profile');
+      } else {
+        $state.go('owner.calendar');
+      }
+    }).catch(function(error) {
+      alert('error' + error);
+    });
   };
-
-  $scope._login = function(user) {
-    $scope.user = user;
-    if(user.profile_id === null) {
-      $state.go('owner.profile');
-    } else {
-      $state.go('owner.schedule');
-    }
-  }
 })
 
-.controller('ProfileCtrl', function($scope, $state, $auth, CepService, ProfileService) {
+.controller('ProfileCtrl', function($scope, $auth, $state, $config, $filter, $timeout, CepService, ProfileService) {
+  function createDateObj(hour) {
+    var obj = {
+      inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
+      step: 10,
+      format: 24,
+      setLabel: 'Selecionar',
+      closeLabel: 'Fechar',
+      callback: function(val) {
+        if(val !== undefined) {
+          obj.inputEpochTime = val;
+        }
+      }
+    };
+    return obj;
+  };
+
+  $scope.owner = $auth.user;
   $scope.profile = new ProfileService();
-  $auth.validateUser().then(function(user) {
-    $scope.profile.user = user;
+  $scope.profile.$get({id: $auth.user.id}, function() {
+    $scope.profile.owner = $auth.user;
   });
+
   $scope.cep = {value: '', $present: false};
+
+  $scope.timeStart = createDateObj(9);
+  $scope.timeEnd = createDateObj(20);
 
   $scope.$watch('cep.value', function(cep) {
     if($scope.cep.value !== undefined && $scope.cep.value.length === 8) {
@@ -65,79 +71,19 @@ angular.module('owner.controllers', ['shared.configs', 'shared.services', 'ng-to
   });
 
   $scope.registry = function() {
-    $scope.profile.$save(function(result) {
-      $state.go('owner.schedule');
-    });
-  };
-})
+    $scope.profile.owner.start = $scope.timeStart.inputEpochTime,
+    $scope.profile.owner.end = $scope.timeEnd.inputEpochTime,
 
-.controller('ScheduleCtrl', function($scope, $state, $auth, $filter, ScheduleService) {
-  function createDateObj(hour) {
-    var obj = {
-      inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
-      step: 10,
-      format: 24,
-      setLabel: 'Selecionar',
-      closeLabel: 'Fechar',
-      callback: function(val) {
-        if(val !== undefined) {
-          obj.inputEpochTime = val;
-        }
-      }
-    };
-    return obj;
-  };
-  $scope.schedules = [];
-  ScheduleService.query(function(schedules) {
-    $scope.schedules = schedules;
-    if(schedules.length > 0) {
-      $state.go('owner.calendar');
-    }
-  });
+    $scope.profile.owner_attributes = $scope.profile.owner;
 
-  $scope.timeStartObj = createDateObj(9);
-  $scope.timeEndObj = createDateObj(20);
-
-  $scope.timeLunchStartObj = createDateObj(12);
-  $scope.timeLunchEndObj = createDateObj(13);
-
-  $scope.timeBreakStartObj = createDateObj(16);
-  $scope.timeBreakEndObj = createDateObj(17);
-
-  $scope.days = $filter('day')();
-  $scope.day = {selected: 'mon'};
-  $scope.keys = Object.keys($scope.days);
-
-  $scope.add = function() {
-    $scope.schedules.push(new ScheduleService({
-      day: $scope.day.selected,
-      start: $scope.timeStartObj.inputEpochTime,
-      end: $scope.timeEndObj.inputEpochTime,
-      startLunch: $scope.timeLunchStartObj.inputEpochTime,
-      endLunch: $scope.timeLunchEndObj.inputEpochTime,
-      startBreak: $scope.timeBreakStartObj.inputEpochTime,
-      endBreak: $scope.timeBreakEndObj.inputEpochTime
-    }));
-    delete $scope.days[$scope.day.selected];
-    $scope.keys = Object.keys($scope.days);
-    $scope.day.selected = $scope.keys[0];
-  };
-
-  $scope.registry = function() {    
-    ScheduleService.saveAll({items: $scope.schedules}, function(schedule) {
+    $scope.profile.$save(function(profile) {
+      $config.set('profile', profile);
       $state.go('owner.calendar');
     });
   };
 })
 
-
-.controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, uiCalendarConfig) {
-  $auth.validateUser().then(function(user) {
-    if(user.profile_id === null) {
-      $state.go('owner.profile');
-    }
-  });
-
+.controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, uiCalendarConfig) {
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
     $scope.modal = modal;
   });
