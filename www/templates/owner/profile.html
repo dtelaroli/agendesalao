@@ -1,14 +1,14 @@
-<ion-view view-title="Agende Salão - Proprietário">
+<ion-view view-title="Perfil">
   <ion-content class="padding">
     <div class="list card">
       <div class="item item-divider">Cadastro</div>
       <div class="item item-body">
         <div>
-          Olá {{owner.name}}, é necessário que você mantenha seus dados profissionais atualizados para que seus clientes possam agendar corretamente horários de atendimento e te encontrar mais facilmente.
+          Olá {{profile.owner.name}}, é necessário que você mantenha seus dados profissionais atualizados para que seus clientes possam agendar corretamente horários de atendimento e te encontrar mais facilmente.
         </div>
       </div>
     </div>
-    <form name="userData" novalidate ng-submit="registry()">
+    <form name="userData" ng-submit="registry()">
       <div class="list card">
         <div class="item item-divider">Dados profissionais</div>
         <label class="item item-input right-align">
@@ -29,17 +29,17 @@
         </label>
         <label class="item item-input">
           <span class="input-label right-align">CEP</span>
-          <input type="text" maxlength="8" ng-model="cep.value" required>
+          <input type="text" maxlength="8" ng-model="profile.zipcode" required>
         </label>
-        <div class="item item-input item-body" ng-if="cep.$present">
+        <div class="item item-input item-body" ng-if="profile.zipcode_present">
           <span class="input-label right-align">Endereço</span>
-          {{profile.address}}
+          {{profile.address}} - {{profile.city}}
         </div>
-        <label class="item item-input" ng-if="cep.$present">
+        <label class="item item-input" ng-if="profile.zipcode_present">
           <span class="input-label right-align">Número</span>
           <input type="text" maxlength="8" ng-model="profile.number" required>
         </label>
-        <label class="item item-input" ng-if="cep.$present">
+        <label class="item item-input" ng-if="profile.zipcode_present">
           <span class="input-label right-align">Complemento</span>
           <input type="text" maxlength="20" ng-model="profile.complement">
         </label>          

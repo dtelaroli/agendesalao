@@ -23,7 +23,7 @@ angular.module('owner', ['ionic', 'shared.configs', 'shared.services', 'owner.co
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider, $configProvider) {
+.config(function($stateProvider, $urlRouterProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -54,7 +54,7 @@ angular.module('owner', ['ionic', 'shared.configs', 'shared.services', 'owner.co
   .state('owner.profile', {
     url: '/profile',
     views: {
-      'owner-profile': {
+      'menuContent': {
         templateUrl: 'templates/owner/profile.html',
         controller: 'ProfileCtrl'
       }
@@ -64,19 +64,9 @@ angular.module('owner', ['ionic', 'shared.configs', 'shared.services', 'owner.co
   .state('owner.calendar', {
     url: '/calendar',
     views: {
-      'owner-calendar': {
+      'menuContent': {
         templateUrl: 'templates/owner/calendar.html',
         controller: 'CalendarCtrl'
-      }
-    }
-  })
-
-  .state('owner.account', {
-    url: '/account',
-    views: {
-      'owner-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
       }
     }
   })

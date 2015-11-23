@@ -1,6 +1,6 @@
 /* Empty. Add your own CSS if you like */
-a {
-  cursor: pointer;
+* {
+  cursor: url('http://ionicframework.com/img/finger.png'), auto !important;
 }
 
 .item-select select {

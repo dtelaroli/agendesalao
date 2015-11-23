@@ -87,4 +87,6 @@ angular.module('shared.directives', [])
           };
       }
   };
-});
+})
+
+;

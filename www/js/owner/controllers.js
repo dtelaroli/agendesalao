@@ -11,7 +11,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.login = function(provider) {
     $auth.authenticate(provider).then(function(owner) {
       $scope.owner = owner;
-      $config.set('owner', owner);
       
       if(owner.profile_id === null) {
         $state.go('owner.profile');
@@ -40,31 +39,29 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     };
     return obj;
   };
-
-  $scope.owner = $auth.user;
-  $scope.profile = new ProfileService();
-  $scope.profile.$get({id: $auth.user.id}, function() {
-    $scope.profile.owner = $auth.user;
-  });
-
-  $scope.cep = {value: '', $present: false};
-
+  
   $scope.timeStart = createDateObj(9);
   $scope.timeEnd = createDateObj(20);
+  
+  $scope.profile = new ProfileService();
+  $scope.profile.$get({id: $auth.user.id}, function(profile) {
+    $scope.timeStart.inputEpochTime = profile.owner.start;
+    $scope.timeEnd.inputEpochTime = profile.owner.end;
+    $scope.profile.zipcode_present = true;
+  });
 
-  $scope.$watch('cep.value', function(cep) {
-    if($scope.cep.value !== undefined && $scope.cep.value.length === 8) {
-      CepService.get({cep: $scope.cep.value}, function(address) {
+  $scope.$watch('profile.zipcode', function(zipcode) {
+    if(zipcode !== undefined && zipcode.length === 8) {
+      CepService.get({cep: $scope.profile.zipcode}, function(address) {
         if(!address.erro) {
-          $scope.cep.$present = true;
-          $scope.profile = angular.extend($scope.profile, {
-            address: (address.logradouro + ' ' + address.complemento).trim(),
-            number: address.number,
-            neighborhood: address.bairro,
-            city: address.localidade,
-            state: address.uf,
-            zipcode: address.cep,
-          });
+          $scope.profile.zipcode.$present = true;
+          $scope.profile.address = (address.logradouro + ' ' + address.complemento).trim();
+          $scope.profile.number = address.number;
+          $scope.profile.neighborhood = address.bairro;
+          $scope.profile.city = address.localidade;
+          $scope.profile.state = address.uf;
+          $scope.profile.zipcode = address.cep;
+          $scope.profile.zipcode_present = true;
         }
       });
     }
@@ -74,10 +71,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.profile.owner.start = $scope.timeStart.inputEpochTime,
     $scope.profile.owner.end = $scope.timeEnd.inputEpochTime,
 
-    $scope.profile.owner_attributes = $scope.profile.owner;
-
     $scope.profile.$save(function(profile) {
-      $config.set('profile', profile);
       $state.go('owner.calendar');
     });
   };
@@ -87,17 +81,21 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
     $scope.modal = modal;
   });
+
   $scope.eventSources = [];
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
-      height: 400,
+      height: 530,
       allDaySlot: false,
+      selectable: false,
+      editable: false,
+      droppable: false,
       lang: 'pt-br',
       timezone: 'local',
-      minTime: '10:00',
-      maxTime: '18:00',
-      slotDuration: '00:20',
+      minTime: '8:00',
+      maxTime: '20:00',
+      slotDuration: '00:30',
       hiddenDays: [0],
       header:{
         left: 'title',
@@ -132,6 +130,10 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     {id: 3, title: 'All Day Event', start: new Date(2015, 11, 3)}
   ];
 
+  $scope.foo = function() {
+    console.log('bar')
+  }
+
   $scope.left = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('next');
   };
@@ -139,10 +141,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.right = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
   };
-})
-
-.controller('ModalCtrl', function($scope) {
-  $scope.title = 'Agendar Cliente';
 })
 
 .controller('AccountCtrl', function($scope, $auth) {
