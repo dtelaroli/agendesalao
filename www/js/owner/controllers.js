@@ -83,7 +83,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 })
 
-.controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, uiCalendarConfig) {
+.controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, $ionicScrollDelegate, uiCalendarConfig) {
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
     $scope.modal = modal;
   });
@@ -91,13 +91,13 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
-      height: 400,
+      height: 'auto',
       allDaySlot: false,
       lang: 'pt-br',
       timezone: 'local',
       minTime: '10:00',
       maxTime: '18:00',
-      slotDuration: '00:20',
+      slotDuration: '00:15',
       hiddenDays: [0],
       header:{
         left: 'title',
@@ -139,6 +139,21 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.right = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
   };
+
+  var scrollSize = window.screen.height / 5 * 4;
+
+  $scope.down = function() {
+    $scope._scroll(scrollSize * -1);
+  };
+
+  $scope.up = function() {
+    $scope._scroll(scrollSize);
+  };
+
+  $scope._scroll = function(top) {
+    var pos = $ionicScrollDelegate.getScrollPosition();
+    $ionicScrollDelegate.scrollTo(pos.left, pos.top + top, true); 
+  }
 })
 
 .controller('ModalCtrl', function($scope) {
