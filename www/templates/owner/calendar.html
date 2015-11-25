@@ -1,6 +1,6 @@
 <ion-view view-title="Minha Agenda">
   <ion-content class="padding">
     <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar="monthly" 
-    on-swipe-left="left()" on-swipe-right="right()"></div>
+    on-swipe-up="up($event)" on-swipe-down="down($event)" on-swipe-left="left()" on-swipe-right="right()"></div>
   </ion-content>
 </ion-view>

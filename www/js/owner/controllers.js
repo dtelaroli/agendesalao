@@ -26,7 +26,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 .controller('ProfileCtrl', function($scope, $auth, $state, $config, $filter, $timeout, CepService, ProfileService) {
   function createDateObj(hour) {
     var obj = {
-      inputEpochTime: new Date(0, 0, 0, hour).getHours() * 60 * 60,
+      inputEpochTime: parseDate(hour),
       step: 10,
       format: 24,
       setLabel: 'Selecionar',
@@ -39,7 +39,41 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     };
     return obj;
   };
+
+  function parseDate(date) {
+    if(typeof date === 'string') {
+      var newDate = new Date(date);
+      newDate.setYear(1970);
+      newDate.setMonth(0);
+      newDate.setDate(1);
+      return newDate.getTime() / 1000;
+    }
+    return date * 60 * 60;
+  }
   
+  function formatDate(date) {
+    var newDate = new Date();
+    newDate.setTime(date * 1000);
+    newDate.setYear(2000);
+    newDate.setMonth(0);
+    newDate.setDate(1);
+    return newDate;
+  }
+
+
+  $scope.owner = $auth.user;
+  $scope.profile = new ProfileService();
+  if($auth.user.profile_id === null) {
+    $scope.profile.owner = $auth.owner;
+  } else {
+    $scope.profile.$get({id: $auth.user.profile_id}, function() {
+      $scope.timeStart.inputEpochTime = parseDate($scope.profile.owner.start);
+      $scope.timeEnd.inputEpochTime = parseDate($scope.profile.owner.end); 
+    });
+  }  
+
+  $scope.cep = {value: '', $present: false};
+
   $scope.timeStart = createDateObj(9);
   $scope.timeEnd = createDateObj(20);
   
@@ -68,16 +102,17 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   });
 
   $scope.registry = function() {
-    $scope.profile.owner.start = $scope.timeStart.inputEpochTime,
-    $scope.profile.owner.end = $scope.timeEnd.inputEpochTime,
+    $scope.profile.owner.start = formatDate($scope.timeStart.inputEpochTime),
+    $scope.profile.owner.end = formatDate($scope.timeEnd.inputEpochTime),
 
     $scope.profile.$save(function(profile) {
-      $state.go('owner.calendar');
+      $config.set('profile', profile);
+      // $state.go('owner.calendar');
     });
   };
 })
 
-.controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, uiCalendarConfig) {
+.controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, $ionicScrollDelegate, uiCalendarConfig) {
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope}).then(function(modal) {
     $scope.modal = modal;
   });
@@ -86,16 +121,16 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.uiConfig = {
     calendar: {
       defaultView: 'agendaWeek',
-      height: 530,
+      height: 'auto',
       allDaySlot: false,
       selectable: false,
       editable: false,
       droppable: false,
       lang: 'pt-br',
       timezone: 'local',
-      minTime: '8:00',
-      maxTime: '20:00',
-      slotDuration: '00:30',
+      minTime: '10:00',
+      maxTime: '18:00',
+      slotDuration: '00:15',
       hiddenDays: [0],
       header:{
         left: 'title',
@@ -141,6 +176,21 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.right = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
   };
+
+  var scrollSize = window.screen.height / 5 * 4;
+
+  $scope.down = function() {
+    $scope._scroll(scrollSize * -1);
+  };
+
+  $scope.up = function() {
+    $scope._scroll(scrollSize);
+  };
+
+  $scope._scroll = function(top) {
+    var pos = $ionicScrollDelegate.getScrollPosition();
+    $ionicScrollDelegate.scrollTo(pos.left, pos.top + top, true); 
+  }
 })
 
 .controller('AccountCtrl', function($scope, $auth) {
