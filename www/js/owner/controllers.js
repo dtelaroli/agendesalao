@@ -73,13 +73,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   $scope.timeStart = createDateObj(9);
   $scope.timeEnd = createDateObj(20);
   
-  $scope.profile = new ProfileService();
-  $scope.profile.$get({id: $auth.user.id}, function(profile) {
-    $scope.timeStart.inputEpochTime = profile.owner.start;
-    $scope.timeEnd.inputEpochTime = profile.owner.end;
-    $scope.profile.zipcode_present = true;
-  });
-
   $scope.$watch('profile.zipcode', function(zipcode) {
     if(zipcode !== undefined && zipcode.length === 8) {
       CepService.get({cep: $scope.profile.zipcode}, function(address) {
