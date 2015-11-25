@@ -44,10 +44,7 @@ angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.service
     templateUrl: 'templates/owner/menu.html',
     resolve: {
       auth: function($auth, $state, $config) {
-        return $auth.validateUser()
-          .catch(function() {
-            $state.go('login');
-        });
+        return $auth.validateUser();
       }
     }
   })

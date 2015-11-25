@@ -13,7 +13,7 @@
         <div class="item item-divider">Dados profissionais</div>
         <label class="item item-input">
           <span class="input-label right-align">Empresa</span>
-          <input type="text" maxlength="30" ng-model="profile.name" required>
+          <input type="text" maxlength="40" ng-model="profile.name" required>
         </label>
         <label class="item item-input">
           <span class="input-label right-align">Serviços</span>
@@ -53,14 +53,23 @@
         <div class="item item-input item-time-content">
           <span class="input-label">Expediente</span>
           <ionic-timepicker input-obj="timeEnd" class="item-time">
-            <button class="button button-light">
+            <button class="button button-light" type="button">
               <standard-time-no-meridian etime='timeEnd.inputEpochTime'></standard-time-no-meridian>
             </button>
           </ionic-timepicker>
           <span class="item-time separator">/</span>
           <ionic-timepicker input-obj="timeStart" class="item-time">
-            <button class="button button-light">
+            <button class="button button-light" type="button">
               <standard-time-no-meridian etime='timeStart.inputEpochTime'></standard-time-no-meridian>
+            </button>
+          </ionic-timepicker>
+        </div>
+
+        <div class="item item-input item-time-content">
+          <span class="input-label">Tempo médio / Cliente</span>
+          <ionic-timepicker input-obj="timeClient" class="item-time">
+            <button class="button button-light" type="button">
+              <standard-time-no-meridian etime='timeClient.inputEpochTime'></standard-time-no-meridian>
             </button>
           </ionic-timepicker>
         </div>

@@ -4,7 +4,9 @@ angular.module('shared.interceptors', [])
   $httpProvider.interceptors.push(function($q, $rootScope) {
     return {
       request: function(config) {
-        $rootScope.$broadcast('loading:show')
+        if(config.url.indexOf('.html') === -1) {
+          $rootScope.$broadcast('loading:show')
+        }
         return config;
       },
       response: function(response) {
@@ -17,7 +19,7 @@ angular.module('shared.interceptors', [])
             break;
 
         case 401:
-            $rootScope.$broadcast('app:error', rejection);
+            $rootScope.$broadcast('auth:validation-error', rejection);
             break;
 
         default:
@@ -31,7 +33,7 @@ angular.module('shared.interceptors', [])
   });
 })
 
-.run(function($rootScope, $ionicLoading, $ionicPopup) {
+.run(function($rootScope, $ionicLoading, $ionicPopup, $state) {
   $rootScope.$on('loading:show', function() {
     $ionicLoading.show({template: 'Carregando...'});
   });
@@ -41,11 +43,7 @@ angular.module('shared.interceptors', [])
   });
 
   $rootScope.$on('auth:validation-error', function() {
-    alert('erro na validação do login');
-  });
-
-  $rootScope.$on('auth:login-error', function() {
-    alert('erro no login');
+    $state.go('login');
   });
 
   $rootScope.$on('app:error', function(event, rejection) {
