@@ -1,6 +1,6 @@
 angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
 
-.config(function($authProvider, $configProvider, $authConfigProvider) {
+.config(function($authProvider, $authConfigProvider) {
   var config = $authConfigProvider.$get()('/owner');
   $authProvider.configure(config);
 })
@@ -59,14 +59,19 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   }
 
   $scope.profile = new ProfileService();
+  if($auth.user === undefined || $auth.user === null) {
+    alert('usuario null')
+  }
   if($auth.user.profile_id === null) {
     $scope.profile.owner = $auth.owner;
   } else {
     $scope.profile.$get({id: $auth.user.profile_id}, function() {
       $scope.timeStart.inputEpochTime = parseDate($scope.profile.owner.start);
       $scope.timeEnd.inputEpochTime = parseDate($scope.profile.owner.end); 
+    }, function(e) {
+      alert(e);
     });
-  }  
+  }
 
   $scope.cep = {value: '', $present: false};
 
