@@ -10,8 +10,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 
   $scope.login = function(provider) {
     $auth.authenticate(provider).then(function(owner) {
-      $scope.owner = owner;
-      
       if(owner.profile_id === null) {
         $state.go('owner.profile');
       } else {
@@ -60,8 +58,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     return newDate;
   }
 
-
-  $scope.owner = $auth.user;
   $scope.profile = new ProfileService();
   if($auth.user.profile_id === null) {
     $scope.profile.owner = $auth.owner;
