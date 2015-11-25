@@ -5,7 +5,8 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('owner', ['ionic', 'shared.configs', 'shared.services', 'owner.controllers', 'shared.directives', 'shared.filters'])
+angular.module('owner', ['ionic', 'shared.configs', 'shared.services', 'owner.controllers', 
+  'shared.directives', 'shared.filters', 'shared.interceptors'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

@@ -36,6 +36,11 @@ angular.module('shared', ['ionic', 'shared.controllers'])
     controller: 'UserTypeCtrl'
   })
 
+  .state('signout', {
+    url: '/signout',
+    controller: 'SignOutCtrl'
+  })
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/');
 });

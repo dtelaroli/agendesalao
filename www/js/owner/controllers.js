@@ -65,8 +65,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.profile.$get({id: $auth.user.profile_id}, function() {
       $scope.timeStart.inputEpochTime = parseDate($scope.profile.owner.start);
       $scope.timeEnd.inputEpochTime = parseDate($scope.profile.owner.end); 
-    }, function(e) {
-      alert(e);
     });
   }
 
