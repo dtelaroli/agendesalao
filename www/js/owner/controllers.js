@@ -15,13 +15,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       } else {
         $state.go('owner.calendar');
       }
-    }).catch(function(error) {
-      alert('error' + error);
     });
   };
 })
 
-.controller('ProfileCtrl', function($scope, $auth, $state, $config, $filter, $timeout, CepService, ProfileService) {
+.controller('ProfileCtrl', function($scope, $auth, $state, $config, $filter, $toast, CepService, ProfileService) {
   function createDateObj(hour) {
     var obj = {
       inputEpochTime: parseDate(hour),
@@ -95,8 +93,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.profile.owner.end = formatDate($scope.timeEnd.inputEpochTime),
 
     $scope.profile.$save(function(profile) {
-      $config.set('profile', profile);
-      // $state.go('owner.calendar');
+      $toast.show('Salvo com sucesso!');
     });
   };
 })
@@ -119,7 +116,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       timezone: 'local',
       minTime: '10:00',
       maxTime: '18:00',
-      slotDuration: '00:15',
+      slotDuration: '00:10',
       hiddenDays: [0],
       header:{
         left: 'title',

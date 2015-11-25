@@ -45,4 +45,17 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
       }
     }
   };
+})
+
+.factory('$toast', function($ionicLoading, $cordovaToast) {
+  return {
+    show: function(message) {
+      if(!!window.cordova) {
+        $cordovaToast.show(message, 3000, 'center');
+      }
+      else {
+        $ionicLoading.show({template: 'Salvo com sucesso!', noBackdrop: true, duration: 3000});
+      }
+    }
+  };
 });
