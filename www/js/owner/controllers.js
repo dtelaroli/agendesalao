@@ -38,24 +38,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 
   function parseDate(date) {
-    var newDate = new Date(date);
-    newDate.setYear(1970);
-    newDate.setMonth(0);
-    newDate.setDate(1);
-    var seconds = newDate.getTime() / 1000;
-    var day = 24 * 60 * 60;
-    if(seconds > day) {
-      return seconds - day;
-    }
-    return seconds;
+    return $.fullCalendar.moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
   }
   
   function formatDate(date) {
-    var newDate = new Date(date * 1000);
-    newDate.setYear(2000);
-    newDate.setMonth(0);
-    newDate.setDate(1);
-    return newDate;
+    return $.fullCalendar.moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
   }
 
   $scope.profile = new ProfileService();
@@ -111,6 +98,10 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.modal = modal;
   });
 
+  var start = $.fullCalendar.moment($auth.user.start).utc().format('HH:mm');
+  var end = $.fullCalendar.moment($auth.user.end).utc().format('HH:mm');
+  var duration = $.fullCalendar.moment($auth.user.time_per_client).utc().format('HH:mm');
+
   $scope.eventSources = [];
   $scope.uiConfig = {
     calendar: {
@@ -122,9 +113,9 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       droppable: false,
       lang: 'pt-br',
       timezone: 'local',
-      minTime: '10:00',
-      maxTime: '18:00',
-      slotDuration: '00:20',
+      minTime: start,
+      maxTime: end,
+      slotDuration: duration,
       hiddenDays: [0],
       header:{
         left: 'title',
