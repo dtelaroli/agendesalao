@@ -54,6 +54,9 @@
 .fc table {
   font-size: 0.9em;
 }
+.fc-agendaWeek-view tr, .fc-agendaDay-view tr {
+    height: 25px;
+}
 
 .right {
   position: absolute;

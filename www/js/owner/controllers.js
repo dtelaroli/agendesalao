@@ -15,6 +15,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       } else {
         $state.go('owner.calendar');
       }
+      $scope.$emit('owner:refresh', [owner]);
     });
   };
 })
@@ -53,7 +54,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       $scope.timeStart.inputEpochTime = parseDate(profile.owner.start);
       $scope.timeEnd.inputEpochTime = parseDate(profile.owner.end);
       $scope.timeClient.inputEpochTime = parseDate(profile.owner.time_per_client);
-      $scope.$emit('owner:update', [profile]);
+      $scope.$emit('owner:refresh', [profile.owner]);
     });
   }
 
@@ -87,7 +88,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 
     $scope.profile.$save(function(profile) {
       $toast.show('Salvo com sucesso!');
-      $scope.$emit('owner:update', [profile.owner]);
+      $scope.$emit('owner:refresh', [profile.owner]);
     });
   };
 })
@@ -110,18 +111,21 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       droppable: false,
       lang: 'pt-br',
       timezone: 'local',
-      hiddenDays: [0],
+      hiddenDays: hiddenDays($auth.user),
+      minTime: formatDate($auth.user.start),
+      maxTime: formatDate($auth.user.end),
+      slotDuration: formatDate($auth.user.time_per_client),
       header:{
         left: 'title',
         right: 'today agendaDay,agendaWeek,month'
       },
       dayClick: function(date, jsEvent, view) {
-        if (view.name === 'agendaDay') {
-          $scope.modal.date = date.toDate();
-          $scope.modal.show();
-        } else {
+        if (view.name === 'month') {
           $(uiCalendarConfig.calendars.monthly).fullCalendar('gotoDate', date);
           $(uiCalendarConfig.calendars.monthly).fullCalendar('changeView', 'agendaDay');
+        } else {
+          $scope.modal.date = date.toDate();
+          $scope.modal.show();
         }
       },
       eventClick: function(e) {
@@ -133,17 +137,27 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     return $.fullCalendar.moment(date).utc().format('HH:mm');
   }
 
-  $scope.$root.$on('owner:update', function(e, params) {
+  function hiddenDays(owner) {
+    var hidden = [];
+    if(!owner.sun) hidden.push(0);
+    if(!owner.mon) hidden.push(1);
+    if(!owner.tue) hidden.push(2);
+    if(!owner.wed) hidden.push(3);
+    if(!owner.thu) hidden.push(4);
+    if(!owner.fri) hidden.push(5);
+    if(!owner.sat) hidden.push(6);
+    return hidden;
+  }
+
+  $scope.$root.$on('owner:refresh', function(e, params) {
     var owner = params[0];
-    if(owner === undefined) {
-      return;
-    }
     $scope.uiConfig.calendar.minTime = formatDate(owner.start);
     $scope.uiConfig.calendar.maxTime = formatDate(owner.end);
     $scope.uiConfig.calendar.slotDuration = formatDate(owner.time_per_client);
+    $scope.uiConfig.calendar.hiddenDays = hiddenDays(owner);
   });
 
-  $scope.$emit('owner:update', [$auth.user]);
+  $scope.$emit('owner:refresh', [$auth.user]);
 
   $scope.uiConfig.calendar.defaultView = 'agendaWeek';
   $scope.uiConfig.calendar.events = [

@@ -43,8 +43,11 @@ angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.service
     abstract: true,
     templateUrl: 'templates/owner/menu.html',
     resolve: {
-      auth: function($auth, $state, $config) {
-        return $auth.validateUser();
+      auth: function($auth, $state, $config, $rootScope) {
+        return $auth.validateUser().then(function(owner) {
+          $rootScope.$broadcast('owner:refresh', [owner]);
+          $rootScope.$emit('owner:refresh', [owner]);
+        });
       }
     }
   })
