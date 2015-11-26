@@ -101,8 +101,8 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.modal = modal;
   });
 
-  $scope.eventSources = [];
   $scope.uiConfig = {
+    eventSources: [],
     calendar: {
       height: 'auto',
       allDaySlot: false,
@@ -111,6 +111,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       droppable: false,
       lang: 'pt-br',
       timezone: 'local',
+      defaultView: 'agendaDay',
       hiddenDays: hiddenDays($auth.user),
       minTime: formatDate($auth.user.start),
       maxTime: formatDate($auth.user.end),
@@ -132,6 +133,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       }
     }
   };
+  $scope.uiConfig.calendar.events = [
+    {id: 1, foo: 'bar', title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2016, 5, 1)},
+    {id: 2, title: 'All Day Event', start: new Date(2015, 10, 2)},
+    {id: 3, title: 'All Day Event', start: new Date(2015, 11, 3)}
+  ];
 
   function formatDate(date) {
     return $.fullCalendar.moment(date).utc().format('HH:mm');
@@ -156,19 +162,9 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.uiConfig.calendar.slotDuration = formatDate(owner.time_per_client);
     $scope.uiConfig.calendar.hiddenDays = hiddenDays(owner);
   });
+  $scope.$emit('owner:refresh', [$auth.user]); 
 
-  $scope.$emit('owner:refresh', [$auth.user]);
-
-  $scope.uiConfig.calendar.defaultView = 'agendaWeek';
-  $scope.uiConfig.calendar.events = [
-    {id: 1, foo: 'bar', title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2016, 5, 1)},
-    {id: 2, title: 'All Day Event', start: new Date(2015, 10, 2)},
-    {id: 3, title: 'All Day Event', start: new Date(2015, 11, 3)}
-  ];
-
-  $scope.selectClient = function(item) {
-    $scope.modal.selected = item;
-  };
+  
 
   $scope.close = function() {
     $scope.modal.hide();
@@ -194,10 +190,30 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 
   $scope._scroll = function(top) {
     var pos = $ionicScrollDelegate.getScrollPosition();
-    $ionicScrollDelegate.scrollTo(pos.left, pos.top + top, true); 
+    $ionicScrollDelegate.scrollTo(pos.left, pos.top + top, true);
   }
 })
 
-.controller('AccountCtrl', function($scope, $auth) {
+.controller('ModalCtrl', function($scope) {
+  $scope.isEmail = true;
+  $scope.isTel = true;
 
+  $scope.selected = {name: ''};
+
+  $scope.$watch('selected.name', function(value) {
+    if(value.length === 0) {
+      $scope.isTel = true;
+      $scope.isEmail = true;
+    } else if(value.match(/^\d/)) {
+      $scope.isTel = true;
+      $scope.isEmail = false;
+    } else {
+      $scope.isTel = false;
+      $scope.isEmail = true;
+    }
+  });
+
+  $scope.selectClient = function(item) {
+    $scope.selected = item;
+  };
 });

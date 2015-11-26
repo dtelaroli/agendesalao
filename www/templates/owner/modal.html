@@ -2,17 +2,26 @@
   <ion-header-bar>
     <h1 class="title">Agendar Cliente</h1>
   </ion-header-bar>
-  <ion-content class="padding">
+  <ion-content class="padding" ng-controller="ModalCtrl">
     <div class="list">
       <ion-toggle ng-model="newClient" toggle-class="toggle-calm">Cliente Novo?</ion-toggle>
       <label class="item item-input" ng-if="newClient">
-        <i class="icon ion-android-call placeholder-icon"></i>
-        <input type="tel" ng-model="modal.selected.name" placeholder="Convidar Cliente por SMS"/>
+        <i class="icon ion-android-call placeholder-icon" ng-if="isTel"></i>
+        <i class="icon ion-email placeholder-icon" ng-if="isEmail"></i>&nbsp;
+        <input type="text" ng-model="selected.name" placeholder="Convidar Cliente por SMS ou Email"/>
       </label>
       <label class="item item-input" ng-if="!newClient">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" autocomplete="off" max-selected-items="1" ionic-autocomplete="{onSelect: selectClient}" 
-        ng-model="modal.selected.name" placeholder="Procurar Cliente Cadastrado"/>
+        ng-model="selected.name" placeholder="Procurar Cliente Cadastrado"/>        
+      </label>
+      <label class="item item-input" ng-if="selected.owner.email && !newClient">
+        <i class="icon ion-email placeholder-icon"></i>&nbsp;
+        <span>{{selected.owner.email}}</span>
+      </label>
+      <label class="item item-input" ng-if="selected.mobile && !newClient">
+        <i class="icon ion-android-call placeholder-icon"></i>&nbsp;
+        <span>{{selected.mobile}}</span>
       </label>
       <label class="item item-input">
         <span class="input-label">Horário:</span>

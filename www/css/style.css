@@ -34,6 +34,11 @@
   padding: 0 10px;
 }
 
+.item-input span {
+  height: 30px;
+  padding-top: 4px;
+}
+
 .item-time.separator {
   margin-top: 7px;
 }
