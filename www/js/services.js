@@ -16,12 +16,8 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
   });
 })
 
-.factory('ScheduleService', function($resource, $config) {
-  return $resource($config.host() + '/schedules/:id.:format', {format: 'json'}, {
-    saveAll: {
-      method: 'POST',
-      isArray: true
-    },
+.factory('EventService', function($resource, $config) {
+  return $resource($config.host() + '/events/:id.:format', {format: 'json'}, {
     update: {
       method: 'PUT'
     }

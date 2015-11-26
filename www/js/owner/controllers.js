@@ -94,7 +94,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 })
 
 .controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, 
-  $ionicScrollDelegate, uiCalendarConfig) {
+  $ionicScrollDelegate, EventService, uiCalendarConfig) {
   
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope})
     .then(function(modal) {
@@ -133,11 +133,10 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       }
     }
   };
-  $scope.uiConfig.calendar.events = [
-    {id: 1, foo: 'bar', title: 'All Day Event', start: new Date(2015, 11, 1), end: new Date(2016, 5, 1)},
-    {id: 2, title: 'All Day Event', start: new Date(2015, 10, 2)},
-    {id: 3, title: 'All Day Event', start: new Date(2015, 11, 3)}
-  ];
+
+  EventService.query(function(events) {
+    $scope.uiConfig.calendar.events = events;
+  });
 
   function formatDate(date) {
     return $.fullCalendar.moment(date).utc().format('HH:mm');
@@ -164,12 +163,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   });
   $scope.$emit('owner:refresh', [$auth.user]); 
 
-  
-
-  $scope.close = function() {
-    $scope.modal.hide();
-  };
-
   $scope.left = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('next');
   };
@@ -194,26 +187,51 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   }
 })
 
-.controller('ModalCtrl', function($scope) {
+.controller('ModalCtrl', function($scope, $toast, EventService) {
   $scope.isEmail = true;
   $scope.isTel = true;
+  $scope.type = 'text';
 
-  $scope.selected = {name: ''};
+  $scope.event = new EventService();
 
-  $scope.$watch('selected.name', function(value) {
-    if(value.length === 0) {
+  $scope.$watch('event.name', function(value) {
+    if(value === undefined || value.length === 0) {
       $scope.isTel = true;
       $scope.isEmail = true;
+      $scope.type = 'text';
     } else if(value.match(/^\d/)) {
       $scope.isTel = true;
       $scope.isEmail = false;
+      $scope.type = 'tel';
     } else {
       $scope.isTel = false;
       $scope.isEmail = true;
+      $scope.type = 'email';
     }
   });
 
+  $scope.type = function() {
+    return $scope.isEmail ? 'email' : 'tel';
+  };
+
   $scope.selectClient = function(item) {
-    $scope.selected = item;
+    $scope.event.owner = item.owner;
+    $scope.event.name = item.name;
+    $scope.event.client = item.mobile;
+  };
+
+  $scope.close = function() {
+    $scope.modal.hide();
+  };
+
+  $scope.schedule = function() {
+    $scope.event.start = $scope.modal.date;
+    $scope.event.estimated_time = $scope.uiConfig.calendar.slotDuration;
+    $scope.event.$save(function(event) {
+      $scope.modal.hide();
+      $toast.show('Agendado com Sucesso!');
+      $scope.uiConfig.calendar.events.push(event);
+      $scope.event = new EventService();
+    });
   };
 });

@@ -15,7 +15,8 @@ angular.module('shared.interceptors', [])
       },
       responseError: function(rejection) {
         switch(rejection.status) {
-        case  200:
+        case 0:
+        case 200:
             break;
 
         case 401:
@@ -49,6 +50,7 @@ angular.module('shared.interceptors', [])
   $rootScope.$on('app:error', function(event, rejection) {
     var errors = ['Erro desconhecido'];
     if(rejection !== undefined) {
+      console.log(rejection)
       errors = rejection.data === undefined ? rejection.errors : rejection.data.errors
     }
     $ionicPopup.alert({

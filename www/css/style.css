@@ -62,6 +62,9 @@
 .fc-agendaWeek-view tr, .fc-agendaDay-view tr {
     height: 25px;
 }
+.fc-event {
+  font-size: inherit;
+}
 
 .right {
   position: absolute;

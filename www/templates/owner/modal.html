@@ -8,20 +8,24 @@
       <label class="item item-input" ng-if="newClient">
         <i class="icon ion-android-call placeholder-icon" ng-if="isTel"></i>
         <i class="icon ion-email placeholder-icon" ng-if="isEmail"></i>&nbsp;
-        <input type="text" ng-model="selected.name" placeholder="Convidar Cliente por SMS ou Email"/>
+        <input type="{{type}}" ng-model="event.client" placeholder="Convidar Cliente por Número ou Email"/>
+      </label>
+      <label class="item item-input" ng-if="newClient">
+        <i class="icon ion-person placeholder-icon" ng-if="isTel"></i>
+        <input type="text" ng-model="event.name" placeholder="Nome"/>
       </label>
       <label class="item item-input" ng-if="!newClient">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" autocomplete="off" max-selected-items="1" ionic-autocomplete="{onSelect: selectClient}" 
-        ng-model="selected.name" placeholder="Procurar Cliente Cadastrado"/>        
+        ng-model="event.name" placeholder="Procurar Cliente Cadastrado"/>        
       </label>
-      <label class="item item-input" ng-if="selected.owner.email && !newClient">
+      <label class="item item-input" ng-if="event.owner.email && !newClient">
         <i class="icon ion-email placeholder-icon"></i>&nbsp;
-        <span>{{selected.owner.email}}</span>
+        <span>{{event.owner.email}}</span>
       </label>
-      <label class="item item-input" ng-if="selected.mobile && !newClient">
+      <label class="item item-input" ng-if="event.mobile && !newClient">
         <i class="icon ion-android-call placeholder-icon"></i>&nbsp;
-        <span>{{selected.mobile}}</span>
+        <span>{{event.mobile}}</span>
       </label>
       <label class="item item-input">
         <span class="input-label">Horário:</span>
