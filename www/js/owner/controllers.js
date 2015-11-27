@@ -39,11 +39,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 
   function parseDate(date) {
-    return $.fullCalendar.moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
+    return $.fullCalendar.moment(new Date(date)).year(1970).month(0).date(1).time() / 1000;
   }
   
   function formatDate(date) {
-    return $.fullCalendar.moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
+    return $.fullCalendar.moment(new Date(date * 1000)).year(2000).month(0).date(1);
   }
 
   $scope.profile = new ProfileService();
@@ -87,14 +87,14 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.profile.owner.time_per_client = formatDate($scope.timeClient.inputEpochTime);
 
     $scope.profile.$save(function(profile) {
-      $toast.show('Salvo com sucesso!');
+      $toast.show('Salvo com sucesso');
       $scope.$emit('owner:refresh', [profile.owner]);
     });
   };
 })
 
 .controller('CalendarCtrl', function($scope, $state, $auth, $config, $ionicModal, 
-  $ionicScrollDelegate, EventService, uiCalendarConfig) {
+  $ionicScrollDelegate, $ionicActionSheet, $toast, EventService, uiCalendarConfig) {
   
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope})
     .then(function(modal) {
@@ -106,9 +106,9 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     calendar: {
       height: 'auto',
       allDaySlot: false,
-      selectable: false,
-      editable: false,
-      droppable: false,
+      editable: true,
+      eventDurationEditable: false,
+      eventOverlap: false,
       lang: 'pt-br',
       timezone: 'local',
       defaultView: 'agendaDay',
@@ -121,15 +121,54 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
         right: 'today agendaDay,agendaWeek,month'
       },
       dayClick: function(date, jsEvent, view) {
+        function hasEvent(date) {
+          var allEvents = $(uiCalendarConfig.calendars.monthly).fullCalendar('clientEvents');
+          return $.grep(allEvents, function (v) { 
+            return +v.start === +date; 
+          }).length > 0;
+        }
+
         if (view.name === 'month') {
           $(uiCalendarConfig.calendars.monthly).fullCalendar('gotoDate', date);
           $(uiCalendarConfig.calendars.monthly).fullCalendar('changeView', 'agendaDay');
+        } else if(hasEvent(date)) {
+          $toast.show('Já existe cliente marcado neste horário');
         } else {
           $scope.modal.date = date.toDate();
           $scope.modal.show();
         }
       },
-      eventClick: function(e) {
+      eventClick: function(event) {
+        $ionicActionSheet.show({
+          titleText: 'Remover Cliente <strong>' + event.title + '</strong> para às ' + event.start.format('HH:mm') + 'h?',
+          cancelText: 'Cancelar',
+          destructiveText: 'Remover',
+          destructiveButtonClicked: function(index) {
+            EventService.delete({id: event.id}, function() {
+              $toast.show('Cliente removido');
+              $(uiCalendarConfig.calendars.monthly).fullCalendar('removeEvents', event.id);
+            });
+            return true;
+          }
+        });
+      },
+      eventDrop: function(event, delta, revertFunc) {
+        $ionicActionSheet.show({
+          buttons: [{ text: 'Remarcar Horário' }],
+          titleText: 'Remarcar <strong>' + event.title + '</strong> para às ' + event.start.format('HH:mm') + 'h?',
+          cancelText: 'Cancelar',
+          cancel: function() {
+            revertFunc();
+          },
+          buttonClicked: function(index) {
+            EventService.update({id: event.id, start: event.start}, function() {
+              $toast.show('Cliente remarcado');
+            }, function() {
+              revertFunc();
+            });
+            return true;
+          }
+        });
       }
     }
   };
@@ -229,7 +268,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.event.estimated_time = $scope.uiConfig.calendar.slotDuration;
     $scope.event.$save(function(event) {
       $scope.modal.hide();
-      $toast.show('Agendado com Sucesso!');
+      $toast.show('Agendado com Sucesso');
       $scope.uiConfig.calendar.events.push(event);
       $scope.event = new EventService();
     });

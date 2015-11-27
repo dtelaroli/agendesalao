@@ -19,7 +19,10 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
 .factory('EventService', function($resource, $config) {
   return $resource($config.host() + '/events/:id.:format', {format: 'json'}, {
     update: {
-      method: 'PUT'
+      method: 'PUT',
+      params: {
+        id: '@id'
+      }
     }
   });
 })
@@ -50,7 +53,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
         $cordovaToast.show(message, 3000, 'center');
       }
       else {
-        $ionicLoading.show({template: 'Salvo com sucesso!', noBackdrop: true, duration: 3000});
+        $ionicLoading.show({template: message, noBackdrop: true, duration: 3000});
       }
     }
   };
