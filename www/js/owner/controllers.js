@@ -39,11 +39,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 
   function parseDate(date) {
-    return $.fullCalendar.moment(new Date(date)).year(1970).month(0).date(1).time() / 1000;
+    return $.fullCalendar.moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
   }
   
   function formatDate(date) {
-    return $.fullCalendar.moment(new Date(date * 1000)).year(2000).month(0).date(1);
+    return $.fullCalendar.moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
   }
 
   $scope.profile = new ProfileService();

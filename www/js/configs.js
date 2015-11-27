@@ -2,8 +2,8 @@ angular.module('shared.configs', [])
 
 .factory('$data', function() {
   var data = {
-    host: 'http://localhost:3000'    
-    // host: 'https://warm-dusk-4656.herokuapp.com'
+    // host: 'http://localhost:3000'    
+    host: 'https://warm-dusk-4656.herokuapp.com'
   };
   return data;
 })
