@@ -85,3 +85,7 @@
   min-width: 27%;
   display: inline-block;
 }
+
+.platform-android .action-sheet-cancel {
+    display: block !important;
+}
