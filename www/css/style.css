@@ -59,9 +59,19 @@
 .fc table {
   font-size: 0.9em;
 }
-.fc-agendaWeek-view tr, .fc-agendaDay-view tr {
+/*.fc-agendaWeek-view tr, .fc-agendaDay-view tr {
     height: 25px;
+}*/
+/*.fc-agenda .fc-agenda-axis {
+  width: 60px !important;
+  font-size: 125% !important;
 }
+.fc-event-time {
+  padding-top: 3px;padding-bottom: 3px;
+}
+.fc-agenda-slots td div, .fc-agenda-slots tr {
+  height: 50px !important
+}*/
 .fc-event {
   font-size: inherit;
 }
