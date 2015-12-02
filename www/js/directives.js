@@ -40,12 +40,12 @@ angular.module('shared.directives', [])
   };
 })
 
-.directive('ionicAutocomplete', function ($ionicPopover, ProfileService) {
+.directive('ionicAutocomplete', function ($ionicPopover, $sce, ProfileService) {
   var popoverTemplate = 
    '<ion-popover-view style="margin-top:5px">' + 
        '<ion-content>' +
            '<div class="list">' +
-              '<a class="item" ng-repeat="item in items" ng-click="selectItem(item)">{{item.name}}</a>' +
+              '<a class="item {{params.classes}}" ng-repeat="item in items" ng-click="selectItem(item)" ng-bind-html="render(item)"></a>' +
            '</div>' +
        '</ion-content>' +
    '</ion-popover-view>';
@@ -59,8 +59,18 @@ angular.module('shared.directives', [])
           var popoverShown = false;
           var popover = null;
           $scope.items = [];
+          if($scope.params.onRender === undefined) {
+            $scope.render = function(item) {
+              return item.name;
+            };
+          } else {
+            $scope.render = function(item) {
+              return $sce.trustAsHtml($scope.params.onRender(item));
+            }
+          }
 
           $($element).keyup(function() {
+              if($scope.inputSearch.length > 0)
               ProfileService.query({q: $scope.inputSearch}, function(profiles) {
                   $scope.items = profiles;
               });

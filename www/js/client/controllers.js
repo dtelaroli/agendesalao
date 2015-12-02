@@ -1,69 +1,37 @@
-angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
+angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
 
 .config(function($authProvider, $authConfigProvider) {
-  var config = $authConfigProvider.$get()('/owner');
+  var config = $authConfigProvider.$get()('/client');
   $authProvider.configure(config);
 })
 
-.controller('LoginCtrl', function($scope, $auth, $state, $config) {
+.controller('LoginCtrl', function($scope, $auth, $state) {
   $scope.user = {};
 
   $scope.login = function(provider) {
     $auth.authenticate(provider).then(function(owner) {
       if(owner.profile_id === null) {
-        $state.go('owner.profile');
+        $state.go('client.profile');
       } else {
-        $state.go('owner.calendar');
+        $state.go('client.calendar');
       }
-      $scope.$emit('owner:refresh', [owner]);
+      $scope.$emit('client:refresh', [owner]);
     });
   };
 })
 
-.controller('ProfileCtrl', function($scope, $auth, $state, $toast, 
-  CepService, ProfileService) {
-  function createDateObj(hour) {
-    var obj = {
-      inputEpochTime: parseDate(hour),
-      step: 5,
-      format: 24,
-      setLabel: 'Selecionar',
-      closeLabel: 'Fechar',
-      callback: function(val) {
-        if(val !== undefined) {
-          obj.inputEpochTime = val;
-        }
-      }
-    };
-    return obj;
-  };
-
-  function parseDate(date) {
-    return $.fullCalendar.moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
-  }
-  
-  function formatDate(date) {
-    return $.fullCalendar.moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
-  }
-
+.controller('ProfileCtrl', function($scope, $auth, $state, $toast, CepService, ProfileService) {
   $scope.profile = new ProfileService();
   if($auth.user.profile_id === null) {
-    $state.go('owner.profile');
+    $scope.profile.client = $auth.user;
   } else {
     $scope.profile.$get({id: $auth.user.profile_id}, function(profile) {
-      $scope.timeStart.inputEpochTime = parseDate(profile.owner.start);
-      $scope.timeEnd.inputEpochTime = parseDate(profile.owner.end);
-      $scope.timeClient.inputEpochTime = parseDate(profile.owner.time_per_client);
-      $scope.$emit('owner:refresh', [profile.owner]);
+      $scope.$emit('client:refresh', [profile.client]);
     });
   }
 
   $scope.cep = {value: '', $present: false};
 
-  $scope.timeStart = createDateObj('2010-01-01T09:00:00Z');
-  $scope.timeEnd = createDateObj('2010-01-01T20:00:00Z');
-  $scope.timeClient = createDateObj('2010-01-01T00:20:00Z');
-  
   $scope.$watch('profile.zipcode', function(zipcode) {
     if(zipcode !== undefined && zipcode.length === 8) {
       CepService.get({cep: $scope.profile.zipcode}, function(address) {
@@ -82,19 +50,30 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   });
 
   $scope.registry = function() {
-    $scope.profile.owner.start = formatDate($scope.timeStart.inputEpochTime);
-    $scope.profile.owner.end = formatDate($scope.timeEnd.inputEpochTime);
-    $scope.profile.owner.time_per_client = formatDate($scope.timeClient.inputEpochTime);
-
     $scope.profile.$save(function(profile) {
       $toast.show('Salvo com sucesso');
-      $scope.$emit('owner:refresh', [profile.owner]);
+      $scope.$emit('client:refresh', [profile.client]);
     });
   };
 })
 
-.controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, 
-  $ionicScrollDelegate, $ionicActionSheet, $toast, EventService, uiCalendarConfig) {
+.controller('DashCtrl', function($scope, $auth, ProfileService, EventService) {
+  $scope.profile = new ProfileService();
+  if($auth.user.profile_id === null) {
+    $state.go('client.profile');
+  } else {
+    $scope.profile.$get({id: $auth.user.profile_id}, function(profile) {
+      $scope.$emit('client:refresh', [profile.owner]);
+    });
+  }
+
+  $scope.events = new EventService();
+  $scope.events.$query();
+
+})
+
+.controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, $ionicScrollDelegate, 
+  $ionicActionSheet, $toast, EventService, uiCalendarConfig) {
   
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope})
     .then(function(modal) {
@@ -112,10 +91,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       lang: 'pt-br',
       timezone: 'local',
       defaultView: 'agendaDay',
-      hiddenDays: hiddenDays($auth.user),
-      minTime: formatDate($auth.user.start),
-      maxTime: formatDate($auth.user.end),
-      slotDuration: formatDate($auth.user.time_per_client),
       header:{
         left: 'title',
         right: 'today agendaDay,agendaWeek,month'
@@ -177,30 +152,10 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.uiConfig.calendar.events = events;
   });
 
-  function formatDate(date) {
-    return $.fullCalendar.moment(date).utc().format('HH:mm');
-  }
-
-  function hiddenDays(owner) {
-    var hidden = [];
-    if(!owner.sun) hidden.push(0);
-    if(!owner.mon) hidden.push(1);
-    if(!owner.tue) hidden.push(2);
-    if(!owner.wed) hidden.push(3);
-    if(!owner.thu) hidden.push(4);
-    if(!owner.fri) hidden.push(5);
-    if(!owner.sat) hidden.push(6);
-    return hidden;
-  }
-
-  $scope.$root.$on('owner:refresh', function(e, params) {
-    var owner = params[0];
-    $scope.uiConfig.calendar.minTime = formatDate(owner.start);
-    $scope.uiConfig.calendar.maxTime = formatDate(owner.end);
-    $scope.uiConfig.calendar.slotDuration = formatDate(owner.time_per_client);
-    $scope.uiConfig.calendar.hiddenDays = hiddenDays(owner);
+  $scope.$root.$on('client:refresh', function(e, params) {
+    var client = params[0];
   });
-  $scope.$emit('owner:refresh', [$auth.user]); 
+  $scope.$emit('client:refresh', [$auth.user]); 
 
   $scope.left = function() {
     $(uiCalendarConfig.calendars.monthly).fullCalendar('next');
@@ -257,10 +212,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.event.owner = item.owner;
     $scope.event.name = item.name;
     $scope.event.client = item.mobile;
-  };
-
-  $scope.render = function(item) {
-    return '<img src="'+ item.client.image +'"/><h3>'+  item.name +'</h3><p>'+ item.neighborhood +'</p>';
   };
 
   $scope.close = function() {

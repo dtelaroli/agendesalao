@@ -8,16 +8,16 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
   });
 })
 
-.factory('ProfileService', function($resource, $config) {
-  return $resource($config.host() + '/profiles/:id.:format', {format: 'json'}, {
+.factory('ProfileService', function($rest) {
+  return $rest('/profiles', {
     update: {
       method: 'PUT'
     }
   });
 })
 
-.factory('EventService', function($resource, $config) {
-  return $resource($config.host() + '/events/:id.:format', {format: 'json'}, {
+.factory('EventService', function($rest) {
+  return $rest('/events', {
     update: {
       method: 'PUT',
       params: {
@@ -25,6 +25,12 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
       }
     }
   });
+})
+
+.factory('$rest', function($resource, $config) {
+  return function(path, methods) {
+    return $resource($config.host() + path + '/:id.:format', {format: 'json'}, methods);
+  };
 })
 
 .factory('$authConfig', function($config) {

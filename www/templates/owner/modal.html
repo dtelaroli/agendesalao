@@ -16,7 +16,8 @@
       </label>
       <label class="item item-input" ng-if="!newClient">
         <i class="icon ion-search placeholder-icon"></i>
-        <input type="text" autocomplete="off" max-selected-items="1" ionic-autocomplete="{onSelect: selectClient}" 
+        <input type="text" autocomplete="off" max-selected-items="1" 
+        ionic-autocomplete="{onSelect: selectClient, onRender: render, classes: 'item-avatar'}" 
         ng-model="event.name" placeholder="Procurar Cliente Cadastrado"/>        
       </label>
       <label class="item item-input" ng-if="event.owner.email && !newClient">

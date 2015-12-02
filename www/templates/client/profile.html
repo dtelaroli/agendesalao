@@ -1,0 +1,55 @@
+<ion-view view-title="Perfil">
+  <ion-content class="padding">
+    <div class="list card">
+      <div class="item item-divider">Cadastro</div>
+      <div class="item item-body">
+        <div>
+          Olá {{profile.client.name}}, preencha seus dados abaixo.
+        </div>
+      </div>
+    </div>
+    <form name="userData" ng-submit="registry()">
+      <div class="list card">
+        <div class="item item-divider">Dados pessoais</div>
+        <label class="item item-input">
+          <span class="input-label right-align">Nome</span>
+          <input type="text" maxlength="40" ng-model="profile.name" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label right-align">Sobre mim</span>
+          <textarea ng-model="profile.description" rows="4" required></textarea>
+        </label>
+        <label class="item item-input">
+          <span class="input-label right-align">CPF</span>
+          <input type="text" maxlength="11" ng-model="profile.cpf" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label right-align">Celular</span>
+          <input type="tel" maxlength="11" ng-model="profile.mobile" required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label right-align">CEP</span>
+          <input type="text" maxlength="8" ng-model="profile.zipcode" required>
+        </label>
+        <div class="item item-input item-body" ng-if="profile.zipcode_present">
+          <span class="input-label right-align">Endereço</span>
+          {{profile.address}} - {{profile.city}}
+        </div>
+        <label class="item item-input" ng-if="profile.zipcode_present">
+          <span class="input-label right-align">Número</span>
+          <input type="text" maxlength="8" ng-model="profile.number" required>
+        </label>
+        <label class="item item-input" ng-if="profile.zipcode_present">
+          <span class="input-label right-align">Complemento</span>
+          <input type="text" maxlength="20" ng-model="profile.complement">
+        </label>          
+      </div>
+
+      <div class="button-bar">
+        <button class="button button-calm">
+          Salvar Informações
+        </button>
+      </div>
+    </form>   
+  </ion-content>
+</ion-view>

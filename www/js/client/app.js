@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.services', 'owner.controllers', 
+angular.module('client', ['ionic', 'ngCordova', 'shared.configs', 'shared.services', 'client.controllers', 
   'shared.directives', 'shared.filters', 'shared.interceptors'])
 
 .config(function($stateProvider, $urlRouterProvider) {
@@ -22,10 +22,10 @@ angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.service
     controller: 'LoginCtrl'
   })
 
-  .state('owner', {
-    url: '/owner',
+  .state('client', {
+    url: '/client',
     abstract: true,
-    templateUrl: 'templates/owner/menu.html',
+    templateUrl: 'templates/client/menu.html',
     resolve: {
       auth: function($auth) {
         return $auth.validateUser();
@@ -33,17 +33,27 @@ angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.service
     }
   })
   
-  .state('owner.profile', {
+  .state('client.profile', {
     url: '/profile',
     views: {
       'menuContent': {
-        templateUrl: 'templates/owner/profile.html',
+        templateUrl: 'templates/client/profile.html',
         controller: 'ProfileCtrl'
       }
     }
   })
 
-  .state('owner.calendar', {
+  .state('client.dash', {
+    url: '/dash',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/client/dash.html',
+        controller: 'DashCtrl'
+      }
+    }
+  })
+
+  .state('client.calendar', {
     url: '/calendar',
     views: {
       'menuContent': {
@@ -54,5 +64,5 @@ angular.module('owner', ['ionic', 'ngCordova', 'shared.configs', 'shared.service
   })
 
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/owner/calendar');
+  $urlRouterProvider.otherwise('/client/dash');
 });
