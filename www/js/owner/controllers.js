@@ -112,10 +112,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
       lang: 'pt-br',
       timezone: 'local',
       defaultView: 'agendaDay',
-      hiddenDays: hiddenDays($auth.user),
-      minTime: formatDate($auth.user.start),
-      maxTime: formatDate($auth.user.end),
-      slotDuration: formatDate($auth.user.time_per_client),
       header:{
         left: 'title',
         right: 'today agendaDay,agendaWeek,month'
@@ -254,7 +250,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 
   $scope.selectClient = function(item) {
-    $scope.event.owner = item.owner;
+    $scope.event.client_id = item.client.id;
     $scope.event.name = item.name;
     $scope.event.client = item.mobile;
   };

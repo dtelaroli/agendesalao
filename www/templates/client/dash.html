@@ -1,14 +1,35 @@
 <ion-view view-title="Home">
-  <ion-content class="padding">
-    <div class="list card">
-      <div class="item item-divider">Meus Horários</div>
-      <div class="item item-body">
-        <div>
-          Olá {{profile.client.name}}, aqui você pode pesquisar profissionais e agendar procedimentos.
-        </div>
+  <ion-content class="padding">   
+    <div class="list card" ng-repeat="item in events">
+      <div class="item item-divider">Horários Marcados</div>
+      <div class="item item-avatar">
+        <img ng-src="{{item.owner.image}}">
+        <h2>{{item.owner.name}}</h2>
+        <p>{{item.start | date:'medium'}}</p>
       </div>
-    </div>
-    
-    </form>   
+      <div class="item tabs tabs-secondary tabs-icon-left">
+        <a class="tab-item" href="#/client/calendar/{{item.owner.id}}">
+          <i class="icon ion-calendar"></i>
+          Agenda
+        </a>
+        <a class="tab-item" href="#/client/calendar">
+          <i class="icon ion-ios-checkmark-outline"></i>
+          Confirmar
+        </a>
+        <a class="tab-item" href="#">
+          <i class="icon ion-android-cancel"></i>
+          Cancelar
+        </a>        
+      </div>
+    </div>  
+
+    <div class="list card" ng-if="histories.length > 0">
+      <div class="item item-divider">Histórico</div>
+      <div class="item item-avatar" ng-repeat="item in histories">
+        <img ng-src="{{item.owner.image}}">
+        <h2>{{item.owner.name}}</h2>
+        <p>{{item.start | date:'medium'}}</p>
+      </div>
+    </div>  
   </ion-content>
 </ion-view>

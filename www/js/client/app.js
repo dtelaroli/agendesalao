@@ -54,10 +54,10 @@ angular.module('client', ['ionic', 'ngCordova', 'shared.configs', 'shared.servic
   })
 
   .state('client.calendar', {
-    url: '/calendar',
+    url: '/calendar/{owner_id:int}',
     views: {
       'menuContent': {
-        templateUrl: 'templates/owner/calendar.html',
+        templateUrl: 'templates/client/calendar.html',
         controller: 'CalendarCtrl'
       }
     }

@@ -19,17 +19,18 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
 .factory('EventService', function($rest) {
   return $rest('/events', {
     update: {
-      method: 'PUT',
-      params: {
-        id: '@id'
-      }
+      method: 'PUT'
     }
   });
 })
 
+.factory('OwnerService', function($rest) {
+  return $rest('/owners');
+})
+
 .factory('$rest', function($resource, $config) {
   return function(path, methods) {
-    return $resource($config.host() + path + '/:id.:format', {format: 'json'}, methods);
+    return $resource($config.host() + path + '/:action/:id.:format', {format: 'json', id: '@id', action: '@action'}, methods);
   };
 })
 

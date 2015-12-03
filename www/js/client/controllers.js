@@ -57,7 +57,7 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   };
 })
 
-.controller('DashCtrl', function($scope, $auth, ProfileService, EventService) {
+.controller('DashCtrl', function($scope, $auth, $state, ProfileService, EventService) {
   $scope.profile = new ProfileService();
   if($auth.user.profile_id === null) {
     $state.go('client.profile');
@@ -65,19 +65,42 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
     $scope.profile.$get({id: $auth.user.profile_id}, function(profile) {
       $scope.$emit('client:refresh', [profile.owner]);
     });
-  }
+  }  
 
-  $scope.events = new EventService();
-  $scope.events.$query();
-
+  $scope.events = EventService.query();
+  $scope.histories = EventService.query({action: 'history'});
 })
 
-.controller('CalendarCtrl', function($scope, $state, $auth, $ionicModal, $ionicScrollDelegate, 
-  $ionicActionSheet, $toast, EventService, uiCalendarConfig) {
+.controller('CalendarCtrl', function($scope, $state, $stateParams, $auth, $ionicModal, $ionicScrollDelegate, 
+  $ionicActionSheet, $toast, OwnerService, uiCalendarConfig) {
   
   $ionicModal.fromTemplateUrl('templates/owner/modal.html', {scope: $scope})
     .then(function(modal) {
     $scope.modal = modal;
+  });
+
+  function formatDate(date) {
+    return $.fullCalendar.moment(date).utc().format('HH:mm');
+  }
+
+  function hiddenDays(owner) {
+    var hidden = [];
+    if(!owner.sun) hidden.push(0);
+    if(!owner.mon) hidden.push(1);
+    if(!owner.tue) hidden.push(2);
+    if(!owner.wed) hidden.push(3);
+    if(!owner.thu) hidden.push(4);
+    if(!owner.fri) hidden.push(5);
+    if(!owner.sat) hidden.push(6);
+    return hidden;
+  }
+
+  $scope.owner = OwnerService.get({id: $stateParams.owner_id}, function(owner) {
+    $scope.uiConfig.calendar.events = owner.events;
+    $scope.uiConfig.calendar.minTime = formatDate(owner.start);
+    $scope.uiConfig.calendar.maxTime = formatDate(owner.end);
+    $scope.uiConfig.calendar.slotDuration = formatDate(owner.time_per_client);
+    $scope.uiConfig.calendar.hiddenDays = hiddenDays(owner);
   });
 
   $scope.uiConfig = {
@@ -147,10 +170,6 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
       }
     }
   };
-
-  EventService.query(function(events) {
-    $scope.uiConfig.calendar.events = events;
-  });
 
   $scope.$root.$on('client:refresh', function(e, params) {
     var client = params[0];
