@@ -6,16 +6,14 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
 })
 
 .controller('LoginCtrl', function($scope, $auth, $state) {
-  $scope.user = {};
-
   $scope.login = function(provider) {
-    $auth.authenticate(provider).then(function(owner) {
-      if(owner.profile_id === null) {
+    $auth.authenticate(provider).then(function(client) {
+      if(client.profile_id === null) {
         $state.go('client.profile');
       } else {
-        $state.go('client.calendar');
+        $state.go('client.dash');
       }
-      $scope.$emit('client:refresh', [owner]);
+      $scope.$emit('client:refresh', [client]);
     });
   };
 })
@@ -57,7 +55,7 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   };
 })
 
-.controller('DashCtrl', function($scope, $auth, $state, ProfileService, EventService) {
+.controller('DashCtrl', function($scope, $auth, $state, ProfileService, EventService, OwnerService) {
   $scope.profile = new ProfileService();
   if($auth.user.profile_id === null) {
     $state.go('client.profile');
@@ -69,6 +67,13 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
 
   $scope.events = EventService.query();
   $scope.histories = EventService.query({action: 'history'});
+  $scope.owner = {};
+  $scope.owners = [];
+  $scope.$watch('owner.q', function(q) {
+    if(q !== undefined && q.length > 0) {
+      $scope.owners = OwnerService.query({q: q});
+    }
+  });
 })
 
 .controller('CalendarCtrl', function($scope, $state, $stateParams, $auth, $ionicModal, $ionicScrollDelegate, 

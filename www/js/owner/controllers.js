@@ -6,8 +6,6 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
 })
 
 .controller('LoginCtrl', function($scope, $auth, $state, $config) {
-  $scope.user = {};
-
   $scope.login = function(provider) {
     $auth.authenticate(provider).then(function(owner) {
       if(owner.profile_id === null) {
