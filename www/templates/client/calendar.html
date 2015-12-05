@@ -1,4 +1,4 @@
-<ion-view view-title="Agenda - {{owner.profile.name}}">
+<ion-view view-title="Agenda de Profissional">
   <ion-content class="padding">
     <div class="list card">
       <div class="item item-avatar">
@@ -8,6 +8,6 @@
       </div>
     </div>
     <div ui-calendar="uiConfig.calendar" ng-model="uiConfig.eventSources" calendar="monthly" data-tap-disabled="true"
-    on-swipe-up="up()" on-swipe-down="down()" on-swipe-left="left()" on-swipe-right="right()"></div>
+    on-swipe-up="uiConfig.up()" on-swipe-down="uiConfig.down()" on-swipe-left="uiConfig.left()" on-swipe-right="uiConfig.right()"></div>
   </ion-content>
 </ion-view>

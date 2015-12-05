@@ -1,4 +1,4 @@
-<ion-view view-title="Home">
+<ion-view view-title="Meus Horários">
   <ion-content class="padding">
     <div class="list card" ng-repeat="item in events">
       <div class="item item-divider">Horários Marcados</div>
@@ -8,15 +8,19 @@
         <p>{{item.start | date:'medium'}}</p>
       </div>
       <div class="item tabs tabs-secondary tabs-icon-left">
-        <a class="tab-item" href="#/client/calendar/{{item.owner.id}}">
+        <a class="tab-item" href="#/client/calendar/{{item.owner_id}}/{{item.start}}">
           <i class="icon ion-calendar"></i>
           Agenda
         </a>
-        <a class="tab-item" href="#/client/calendar">
+        <a class="tab-item" ng-if="!item.confirmed" ng-click="confirm(item)">
           <i class="icon ion-ios-checkmark-outline"></i>
           Confirmar
         </a>
-        <a class="tab-item" href="#">
+        <div class="tab-item" ng-if="item.confirmed">
+          <i class="icon ion-ios-checkmark"></i>
+          Confirmado
+        </div>
+        <a class="tab-item" ng-click="cancel(item, $index)">
           <i class="icon ion-android-cancel"></i>
           Cancelar
         </a>        
@@ -29,7 +33,7 @@
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" autocomplete="off" ng-model="owner.q" placeholder="Procurar Estabelecimento"/>        
       </label>
-      <a class="item item-avatar" ng-repeat="item in owners" href="#/client/calendar/{{item.id}}">
+      <a class="item item-avatar" ng-repeat="item in owners" href="#/client/calendar/{{item.id}}/">
         <img ng-src="{{item.image}}">
         <h2>{{item.profile.name}}</h2>
         <p>{{item.profile.neighborhood}}</p>

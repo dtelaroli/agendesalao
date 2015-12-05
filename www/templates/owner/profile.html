@@ -4,7 +4,7 @@
       <div class="item item-divider">Cadastro</div>
       <div class="item item-body">
         <div>
-          Olá {{profile.owner.name}}, é necessário que você mantenha seus dados profissionais atualizados para que seus clientes possam agendar corretamente horários de atendimento e te encontrar mais facilmente.
+          Olá {{owner.name}}, é necessário que você mantenha seus dados profissionais atualizados para que seus clientes possam agendar corretamente horários de atendimento e te encontrar mais facilmente.
         </div>
       </div>
     </div>
@@ -31,15 +31,15 @@
           <span class="input-label right-align">CEP</span>
           <input type="text" maxlength="8" ng-model="profile.zipcode" required>
         </label>
-        <div class="item item-input item-body" ng-if="profile.zipcode_present">
+        <div class="item item-input item-body">
           <span class="input-label right-align">Endereço</span>
           {{profile.address}} - {{profile.city}}
         </div>
-        <label class="item item-input" ng-if="profile.zipcode_present">
+        <label class="item item-input">
           <span class="input-label right-align">Número</span>
           <input type="text" maxlength="8" ng-model="profile.number" required>
         </label>
-        <label class="item item-input" ng-if="profile.zipcode_present">
+        <label class="item item-input">
           <span class="input-label right-align">Complemento</span>
           <input type="text" maxlength="20" ng-model="profile.complement">
         </label>          
@@ -74,13 +74,13 @@
           </ionic-timepicker>
         </div>
 
-        <ion-checkbox ng-model="profile.owner.mon">Segunda-feira</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.tue">Terça-feira</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.wed">Quarta-feira</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.thu">Quinta-feira</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.fri">Sexta-feira</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.sat">Sábado</ion-checkbox>
-        <ion-checkbox ng-model="profile.owner.sun">Domingo</ion-checkbox>
+        <ion-checkbox ng-model="owner.mon">Segunda-feira</ion-checkbox>
+        <ion-checkbox ng-model="owner.tue">Terça-feira</ion-checkbox>
+        <ion-checkbox ng-model="owner.wed">Quarta-feira</ion-checkbox>
+        <ion-checkbox ng-model="owner.thu">Quinta-feira</ion-checkbox>
+        <ion-checkbox ng-model="owner.fri">Sexta-feira</ion-checkbox>
+        <ion-checkbox ng-model="owner.sat">Sábado</ion-checkbox>
+        <ion-checkbox ng-model="owner.sun">Domingo</ion-checkbox>
       </div>
 
       <div class="button-bar">

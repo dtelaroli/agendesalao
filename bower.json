@@ -10,6 +10,7 @@
     "angular-resource": "~1.4.7",
     "ionic-timepicker": "~0.4.0",
     "angular-ui-calendar": "~1.0.1",
-    "ngCordova": "~0.1.23-alpha"
+    "ngCordova": "~0.1.23-alpha",
+    "jquery.ui.touch": "*"
   }
 }

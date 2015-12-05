@@ -1,4 +1,4 @@
-<ion-view view-title="Perfil">
+<ion-view view-title="Meu Perfil">
   <ion-content class="padding">
     <div class="list card">
       <div class="item item-divider">Cadastro</div>
@@ -31,15 +31,15 @@
           <span class="input-label right-align">CEP</span>
           <input type="text" maxlength="8" ng-model="profile.zipcode" required>
         </label>
-        <div class="item item-input item-body" ng-if="profile.zipcode_present">
+        <div class="item item-input item-body">
           <span class="input-label right-align">Endereço</span>
           {{profile.address}} - {{profile.city}}
         </div>
-        <label class="item item-input" ng-if="profile.zipcode_present">
+        <label class="item item-input">
           <span class="input-label right-align">Número</span>
           <input type="text" maxlength="8" ng-model="profile.number" required>
         </label>
-        <label class="item item-input" ng-if="profile.zipcode_present">
+        <label class="item item-input">
           <span class="input-label right-align">Complemento</span>
           <input type="text" maxlength="20" ng-model="profile.complement">
         </label>          

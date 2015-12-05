@@ -16,6 +16,9 @@ angular.module('shared.interceptors', [])
       responseError: function(rejection) {
         switch(rejection.status) {
         case 0:
+          $rootScope.$broadcast('app:error', {errors: ['Erro ao conectar ao servidor']});
+          break;
+
         case 200:
         case 404:
             break;
@@ -65,13 +68,20 @@ angular.module('shared.interceptors', [])
   });
 
   $rootScope.$on('app:error', function(event, rejection) {
+    function parseErrors(obj) {
+      var messages = [];
+      for(var i in obj) {
+        messages.push(i + ' ' + obj[i]);
+      }
+      return messages;
+    }
     var errors = ['Erro desconhecido'];
     if(rejection !== undefined) {
       console.log(rejection)
-      errors = rejection.data === undefined ? rejection.errors : rejection.data.errors
+      errors = rejection.data === undefined ? rejection.errors : parseErrors(rejection.data)
     }
     $ionicPopup.alert({
-      title: 'Erro',
+      title: 'Erro - ' + rejection.statusText,
       template: errors.join('<br />')
     });
   });
