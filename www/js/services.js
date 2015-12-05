@@ -194,13 +194,12 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
   }
 
   data.refresh = function() {
-    var events = new Event();
-    events.$query()
-    .then(function(events) {
+    Event.query(function(events) {
       data.events(events);
-    }).finally(function() {
       $rootScope.$broadcast('scroll.refreshComplete');
-    })
+    }, function() {
+      $rootScope.$broadcast('scroll.refreshComplete');
+    });
   };
 
   data.events = function(events) {
