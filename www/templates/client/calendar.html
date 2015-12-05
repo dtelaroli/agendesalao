@@ -1,5 +1,9 @@
 <ion-view view-title="Agenda de Profissional">
   <ion-content class="padding">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="uiConfig.refresh()">
+    </ion-refresher>
     <div class="list card">
       <div class="item item-avatar">
         <img ng-src="{{owner.image}}">

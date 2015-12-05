@@ -1,5 +1,9 @@
 <ion-view view-title="Meus Horários">
   <ion-content class="padding">
+    <ion-refresher
+      pulling-text="Arraste para recarregar..."
+      on-refresh="doRefresh()">
+    </ion-refresher>
     <div class="list card" ng-repeat="item in events">
       <div class="item item-divider">Horários Marcados</div>
       <div class="item item-avatar">

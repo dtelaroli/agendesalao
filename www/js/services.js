@@ -66,7 +66,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
   };
 })
 
-.factory('$calendar', function($ionicActionSheet, $ionicScrollDelegate, $toast, uiCalendarConfig, Event) {
+.factory('$calendar', function($rootScope, $ionicActionSheet, $ionicScrollDelegate, $toast, uiCalendarConfig, Event) {
   var data = {
     modal: {},
     eventSources: [],
@@ -192,6 +192,16 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
     $(uiCalendarConfig.calendars.monthly).fullCalendar('gotoDate', new Date(date));
     $(uiCalendarConfig.calendars.monthly).fullCalendar('changeView', 'agendaDay');
   }
+
+  data.refresh = function() {
+    var events = new Event();
+    events.$query()
+    .then(function(events) {
+      data.events(events);
+    }).finally(function() {
+      $rootScope.$broadcast('scroll.refreshComplete');
+    })
+  };
 
   data.events = function(events) {
     data.calendar.events = events;

@@ -36,11 +36,11 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   };
 
   function parseDate(date) {
-    return moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
+    return $.fullCalendar.moment(new Date(date)).utc().year(1970).month(0).date(1).time() / 1000;
   }
   
   function formatDate(date) {
-    return moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
+    return $.fullCalendar.moment(new Date(date * 1000)).utc().year(2000).month(0).date(1).toISOString();
   }
 
   $scope.owner = $auth.user;
@@ -63,7 +63,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
   
   $scope.$watch('profile.zipcode', function(zipcode) {
     if(zipcode !== undefined && zipcode.length === 8) {
-      Cep.get({cep: $scope.profile.zipcode}).then(function(address) {
+      Cep.get({cep: $scope.profile.zipcode}, function(address) {
         if(!address.erro) {
           $scope.profile.address = (address.logradouro + ' ' + address.complemento).trim();
           $scope.profile.number = address.number;
@@ -97,7 +97,7 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.uiConfig.modal = modal;
   });
 
-  $scope.uiConfig.config($auth.owner);
+  $scope.uiConfig.config($auth.user);
 })
 
 .controller('ModalCtrl', function($scope, $toast, Event, Profile) {

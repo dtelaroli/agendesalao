@@ -20,12 +20,10 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
 
 .controller('ProfileCtrl', function($scope, $auth, $state, $toast, Cep, Profile) {
   $scope.profile = new Profile();
-  if($auth.user.profile_id === null) {
-    $scope.profile.client = $auth.user;
-  } else {
-    $scope.profile.$get({id: $auth.user.profile_id}).then(function(profile) {
-      $scope.$emit('client:refresh', [profile.client]);
-    });
+  $scope.client = $auth.user;
+  $scope.profile.name = $auth.user.name;
+  if($auth.user.profile_id !== null) {
+    $scope.profile.$get({id: $auth.user.profile_id});
   }
 
   $scope.cep = {value: ''};
@@ -47,6 +45,7 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
 
   $scope.registry = function() {
     var method = !$scope.profile.id ? '$save' : '$update';
+    $scope.profile.client_id = $scope.client.id;
     $scope.profile[method]().then(function(profile) {
       $toast.show('Salvo com sucesso');
       $scope.$emit('client:refresh', [profile.client]);
@@ -71,6 +70,14 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
       $scope.owners = Owner.query({q: q});
     }
   });
+
+  $scope.doRefresh = function() {
+    $scope.histories = Event.query({action: 'history'});
+    $scope.events = new Event();
+    $scope.events.$query().finally(function() {
+      $scope.$broadcast('scroll.refreshComplete');
+    });
+  };
 
   $scope.confirm = function(item) {
     $ionicActionSheet.show({

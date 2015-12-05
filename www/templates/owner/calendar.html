@@ -1,5 +1,10 @@
 <ion-view view-title="Minha Agenda">
   <ion-content class="padding">
+    <ion-refresher
+      pulling-text="Pull to refresh..."
+      on-refresh="uiConfig.refresh()">
+    </ion-refresher>
+    <br/>
     <div ui-calendar="uiConfig.calendar" ng-model="uiConfig.eventSources" calendar="monthly" data-tap-disabled="true"
     on-swipe-up="uiConfig.up()" on-swipe-down="uiConfig.down()" on-swipe-left="uiConfig.left()" on-swipe-right="uiConfig.right()"></div>
   </ion-content>
