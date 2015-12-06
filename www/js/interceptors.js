@@ -1,4 +1,4 @@
-angular.module('shared.interceptors', [])
+angular.module('app.interceptors', [])
     
 .config(function($httpProvider) {
   $httpProvider.interceptors.push(function($q, $rootScope) {
@@ -64,7 +64,7 @@ angular.module('shared.interceptors', [])
   });
 
   $rootScope.$on('auth:validation-error', function() {
-    $state.go('login');
+    $state.go('selector');
   });
 
   $rootScope.$on('app:error', function(event, rejection) {

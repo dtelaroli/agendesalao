@@ -1,4 +1,4 @@
-angular.module('shared.services', ['ngResource', 'shared.configs'])
+angular.module('app.services', ['ngResource'])
 
 .factory('Cep', function($resource) {
   return $resource('https://viacep.com.br/ws/:cep/json/unicode', {}, {
@@ -9,7 +9,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
 })
 
 .factory('Profile', function($rest) {
-  return $rest('/profiles', {
+  return $rest('profiles', {
     update: {
       method: 'PUT'
     }
@@ -17,7 +17,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
 })
 
 .factory('Event', function($rest) {
-  return $rest('/events', {
+  return $rest('events', {
     update: {
       method: 'PUT'
     }
@@ -25,31 +25,19 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
 })
 
 .factory('Owner', function($rest) {
-  return $rest('/owners');
+  return $rest('owners');
 })
 
 .factory('$rest', function($resource, $config) {
   return function(path, methods) {
-    return $resource($config.host() + path + '/:action/:id.:format', {format: 'json', id: '@id', action: '@action'}, methods);
-  };
-})
-
-.factory('$authConfig', function($config) {
-  var isMob = window.cordova !== undefined;
-  return function(module) {
-    return {
-      apiUrl: $config.auth(module),
-      storage: (isMob ? 'localStorage' : 'cookies'),
-      omniauthWindowType: (isMob ? 'inAppBrowser' : 'newWindow'),
-      signOutUrl: '/auth/sign_out',
-      accountUpdatePath: '/auth',
-      accountDeletePath: '/auth',
-      tokenValidationPath: '/auth/validate_token',
-      authProviderPaths: {
-        facebook: '/auth/facebook',
-        google: '/auth/google_oauth2'
-      }
-    }
+    return $resource($config.host() + ':module/:path/:action/:id.:format', {
+      module: $config.module, 
+      path: path,
+      format: 'json', 
+      id: '@id',
+      action: '@action'
+    },
+    methods);
   };
 })
 
@@ -155,7 +143,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
     if(!owner.thu) hidden.push(4);
     if(!owner.fri) hidden.push(5);
     if(!owner.sat) hidden.push(6);
-    return hidden;
+    return hidden.length === 7 ? [] : hidden;
   }
 
   data.left = function() {
@@ -206,8 +194,7 @@ angular.module('shared.services', ['ngResource', 'shared.configs'])
     data.calendar.events = events;
   };
 
-  return function(config) {
-    data.calendar = angular.extend(data.calendar, config);
+  return function() {
     return data;
   };
 });

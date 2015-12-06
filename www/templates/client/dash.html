@@ -1,38 +1,8 @@
 <ion-view view-title="Meus Horários">
   <ion-content class="padding">
-    <ion-refresher
-      pulling-text="Arraste para recarregar..."
-      on-refresh="doRefresh()">
+    <ion-refresher pulling-text="Arraste para recarregar" on-refresh="doRefresh()">
     </ion-refresher>
-    <div class="list card" ng-repeat="item in events">
-      <div class="item item-divider">Horários Marcados</div>
-      <div class="item item-avatar">
-        <img ng-src="{{item.owner.image}}">
-        <h2>{{item.profile.name}}</h2>
-        <p>{{item.start | date:'medium'}}</p>
-      </div>
-      <div class="item tabs tabs-secondary tabs-icon-left">
-        <a class="tab-item" href="#/client/calendar/{{item.owner_id}}/{{item.start}}">
-          <i class="icon ion-calendar"></i>
-          Agenda
-        </a>
-        <a class="tab-item" ng-if="!item.confirmed" ng-click="confirm(item)">
-          <i class="icon ion-ios-checkmark-outline"></i>
-          Confirmar
-        </a>
-        <div class="tab-item" ng-if="item.confirmed">
-          <i class="icon ion-ios-checkmark"></i>
-          Confirmado
-        </div>
-        <a class="tab-item" ng-click="cancel(item, $index)">
-          <i class="icon ion-android-cancel"></i>
-          Cancelar
-        </a>        
-      </div>
-    </div>
-    
-    <div class="list card">
-      <div class="item item-divider">Procurar Profissionais</div>
+    <div class="list list-inset">
       <label class="item item-input">
         <i class="icon ion-search placeholder-icon"></i>
         <input type="text" autocomplete="off" ng-model="owner.q" placeholder="Procurar Estabelecimento"/>        
@@ -43,6 +13,30 @@
         <p>{{item.profile.neighborhood}}</p>
       </a>
     </div>
+    <div class="list card" ng-if="events.length > 0">
+      <div class="item item-divider">Horários Marcados</div>
+      <div class="item-container" ng-repeat="item in events">
+        <div class="item item-avatar" ng-click="item.show = !item.show">
+          <img ng-src="{{item.owner.image}}">
+          <h2>{{item.profile.name}}</h2>
+          <p>{{item.start | date:'medium'}}</p>
+        </div>
+        <div class="item tabs tabs-icon-left" ng-if="item.show">
+          <a class="tab-item" href="#/client/calendar/{{item.owner_id}}/{{item.start}}">
+            <i class="icon ion-calendar"></i>Agenda
+          </a>
+          <a class="tab-item" ng-if="!item.confirmed" ng-click="confirm(item)">
+            <i class="icon ion-ios-checkmark-outline"></i>Confirmar
+          </a>
+          <div class="tab-item" ng-if="item.confirmed">
+            <i class="icon ion-ios-checkmark"></i>Confirmado
+          </div>
+          <a class="tab-item" ng-click="cancel(item, $index)">
+            <i class="icon ion-android-cancel"></i>Cancelar
+          </a>        
+        </div>
+      </div>
+    </div>
 
     <div class="list card" ng-if="histories.length > 0">
       <div class="item item-divider">Histórico</div>
@@ -51,6 +45,6 @@
         <h2>{{item.profile.name}}</h2>
         <p>{{item.start | date:'medium'}}</p>
       </div>
-    </div>  
+    </div>
   </ion-content>
 </ion-view>

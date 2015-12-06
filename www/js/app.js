@@ -1,31 +1,98 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module('shared', ['ionic', 'shared.controllers'])
+angular.module('app', ['ionic', 'ngCordova', 'ng-token-auth', 'ui.calendar', 'app.configs', 'app.services', 'app.directives', 'app.filters', 
+  'app.interceptors', 'app.controllers', 'owner.controllers', 'client.controllers'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-  // Ionic uses AngularUI Router which uses the concept of states
-  // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
   $stateProvider
 
   .state('selector', {
     url: '/',
     templateUrl: 'templates/selector.html',
-    controller: 'UserTypeCtrl'
+    controller: 'SelectorCtrl'
   })
 
-  .state('signout', {
-    url: '/signout',
-    controller: 'SignOutCtrl'
+  .state('login', {
+    url: '/login',
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
   })
 
-  // if none of the above states are matched, use this as the fallback
+  .state('logout', {
+    url: '/logout',
+    controller: 'LogoutCtrl'
+  })
+
+  .state('owner', {
+    url: '/owner',
+    abstract: true,
+    templateUrl: 'templates/owner/menu.html',
+    resolve: {
+      auth: function($auth) {
+        return $auth.validateUser({config: 'owner'});
+      }
+    }
+  })
+  
+  .state('owner.profile', {
+    url: '/profile',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/owner/profile.html',
+        controller: 'ProfileCtrl'
+      }
+    }
+  })
+
+  .state('owner.calendar', {
+    url: '/calendar',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/owner/calendar.html',
+        controller: 'CalendarCtrl'
+      }
+    }
+  })
+
+  .state('client', {
+    url: '/client',
+    abstract: true,
+    templateUrl: 'templates/client/menu.html',
+    resolve: {
+      auth: function($auth) {
+        return $auth.validateUser({config: 'client'});
+      }
+    }
+  })
+  
+  .state('client.profile', {
+    url: '/profile',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/client/profile.html',
+        controller: 'ClientProfileCtrl'
+      }
+    }
+  })
+
+  .state('client.dash', {
+    url: '/dash',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/client/dash.html',
+        controller: 'ClientDashCtrl'
+      }
+    }
+  })
+
+  .state('client.calendar', {
+    url: '/calendar/{owner_id:int}/:date',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/client/calendar.html',
+        controller: 'ClientCalendarCtrl'
+      }
+    }
+  })
+
   $urlRouterProvider.otherwise('/');
 });

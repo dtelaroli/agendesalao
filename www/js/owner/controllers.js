@@ -1,21 +1,4 @@
-angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.calendar'])
-
-.config(function($authProvider, $authConfigProvider) {
-  var config = $authConfigProvider.$get()('/owner');
-  $authProvider.configure(config);
-})
-
-.controller('LoginCtrl', function($scope, $auth, $state, $config) {
-  $scope.login = function(provider) {
-    $auth.authenticate(provider).then(function(owner) {
-      if(owner.profile_id === null) {
-        $state.go('owner.profile');
-      } else {
-        $state.go('owner.calendar');
-      }
-    });
-  };
-})
+angular.module('owner.controllers', ['ionic-timepicker'])
 
 .controller('ProfileCtrl', function($scope, $auth, $state, $toast, 
   Cep, Profile) {
@@ -97,7 +80,9 @@ angular.module('owner.controllers', ['ng-token-auth', 'ionic-timepicker', 'ui.ca
     $scope.uiConfig.modal = modal;
   });
 
-  $scope.uiConfig.config($auth.user);
+  $auth.validateUser({config: 'owner'}).then(function(owner) {
+    $scope.uiConfig.config(owner);
+  });
 })
 
 .controller('ModalCtrl', function($scope, $toast, Event, Profile) {

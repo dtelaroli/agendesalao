@@ -1,4 +1,4 @@
-angular.module('shared.directives', [])
+angular.module('app.directives', [])
 
 .directive('standardTimeNoMeridian', function() {
   return {

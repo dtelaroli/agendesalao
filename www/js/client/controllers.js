@@ -1,24 +1,6 @@
-angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
+angular.module('client.controllers', [])
 
-.config(function($authProvider, $authConfigProvider) {
-  var config = $authConfigProvider.$get()('/client');
-  $authProvider.configure(config);
-})
-
-.controller('LoginCtrl', function($scope, $auth, $state) {
-  $scope.login = function(provider) {
-    $auth.authenticate(provider).then(function(client) {
-      if(client.profile_id === null) {
-        $state.go('client.profile');
-      } else {
-        $state.go('client.dash');
-      }
-      $scope.$emit('client:refresh', [client]);
-    });
-  };
-})
-
-.controller('ProfileCtrl', function($scope, $auth, $state, $toast, Cep, Profile) {
+.controller('ClientProfileCtrl', function($scope, $auth, $state, $toast, Cep, Profile) {
   $scope.profile = new Profile();
   $scope.client = $auth.user;
   $scope.profile.name = $auth.user.name;
@@ -53,28 +35,31 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   };
 })
 
-.controller('DashCtrl', function($scope, $auth, $state, $toast, $ionicActionSheet, Profile, Event, Owner) {
+.controller('ClientDashCtrl', function($scope, $auth, $state, $toast, $ionicActionSheet, Profile, Event, Owner) {
   $scope.profile = new Profile();
-  if($auth.user.profile_id === null) {
-    $state.go('client.profile');
-  } else {
-    $scope.profile.$get({id: $auth.user.profile_id});
-  }  
+  $auth.validateUser({config: 'client'}).then(function(client) {
+    if(client.profile_id === null) {
+      $state.go('client.profile');
+    } else {
+      $scope.profile.$get({id: client.profile_id});
+    }
+  });
 
   $scope.events = Event.query();
   $scope.histories = Event.query({action: 'history'});
   $scope.owner = {};
   $scope.owners = [];
   $scope.$watch('owner.q', function(q) {
-    if(q !== undefined && q.length > 0) {
+    if(q === undefined || q.length === 0) {
+      $scope.owners = [];
+    } else {
       $scope.owners = Owner.query({q: q});
     }
   });
 
   $scope.doRefresh = function() {
     $scope.histories = Event.query({action: 'history'});
-    $scope.events = new Event();
-    $scope.events.$query().finally(function() {
+    $scope.events = Event.query(function() {
       $scope.$broadcast('scroll.refreshComplete');
     });
   };
@@ -95,7 +80,6 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   };
 
   $scope.cancel = function(item, index) {
-    console.log(item)
     $ionicActionSheet.show({
       titleText: 'Cancelar seu horário de ' + moment(item.start).format('HH:mm') + 'h?',
       cancelText: 'Cancelar',
@@ -111,7 +95,7 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   };
 })
 
-.controller('CalendarCtrl', function($scope, $state, $stateParams, $ionicModal, $calendar, Owner) {
+.controller('ClientCalendarCtrl', function($scope, $state, $stateParams, $ionicModal, $calendar, Owner) {
   $scope.uiConfig = $calendar();
   $ionicModal.fromTemplateUrl('templates/client/modal.html', {scope: $scope})
     .then(function(modal) {
@@ -124,7 +108,7 @@ angular.module('client.controllers', ['ng-token-auth', 'ui.calendar'])
   });
 })
 
-.controller('ModalCtrl', function($scope, $auth, $toast, Event, Profile) {
+.controller('ClientModalCtrl', function($scope, $auth, $toast, Event, Profile) {
   $scope.event = new Event();
 
   $scope.close = function() {

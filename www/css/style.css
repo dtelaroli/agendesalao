@@ -7,6 +7,14 @@
   top: 1px;
 }
 
+.item-container {
+  border-bottom: 4px solid #ddd;
+  border-bottom: 4px solid #ddd;
+}
+.item-container:last-child {
+  border-bottom: none;
+}
+
 .item-time-content {
   display: block;
   padding-right: 10px;
