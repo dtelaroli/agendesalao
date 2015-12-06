@@ -5,7 +5,7 @@ angular.module('client.controllers', [])
   $scope.client = $auth.user;
   $scope.profile.name = $auth.user.name;
   if($auth.user.profile_id !== null) {
-    $scope.profile.$get({id: $auth.user.profile_id});
+    $scope.profile.$get();
   }
 
   $scope.cep = {value: ''};
@@ -30,7 +30,6 @@ angular.module('client.controllers', [])
     $scope.profile.client_id = $scope.client.id;
     $scope.profile[method]().then(function(profile) {
       $toast.show('Salvo com sucesso');
-      $scope.$emit('client:refresh', [profile.client]);
     });
   };
 })
@@ -108,7 +107,7 @@ angular.module('client.controllers', [])
   });
 })
 
-.controller('ClientModalCtrl', function($scope, $auth, $toast, Event, Profile) {
+.controller('ClientModalCtrl', function($scope, $auth, $toast, Event) {
   $scope.event = new Event();
 
   $scope.close = function() {
@@ -119,6 +118,7 @@ angular.module('client.controllers', [])
     $scope.event.owner_id = $scope.owner.id;
     $scope.event.start = $scope.uiConfig.modal.date;
     $scope.event.estimated_time = $scope.uiConfig.calendar.slotDuration;
+
     $scope.event.$save().then(function(event) {
       $scope.uiConfig.modal.hide();
       $scope.uiConfig.calendar.events.push(event);

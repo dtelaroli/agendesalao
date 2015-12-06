@@ -4,7 +4,6 @@ angular.module('app.controllers', [])
   var owner = $authConfigProvider.$get()('owner');
   var client = $authConfigProvider.$get()('client');
   $authProvider.configure([
-    { default: client },
     { owner: owner },
     { client: client }
   ]);
@@ -29,7 +28,12 @@ angular.module('app.controllers', [])
   };
 })
 
-.controller('LoginCtrl', function($scope, $auth, $state, $localStorage) {  
+.controller('LoginCtrl', function($scope, $auth, $state, $localStorage, $ionicHistory) {  
+  $scope.$on('$ionicView.enter', function () {
+    $ionicHistory.clearCache();
+    $ionicHistory.clearHistory();
+  });
+
   $scope.login = function(provider) {
     var module = $localStorage.get('module');
     $auth.authenticate(provider, {config: module}).then(function(user) {
@@ -40,13 +44,11 @@ angular.module('app.controllers', [])
 })
 
 .controller('LogoutCtrl', function($scope, $auth, $state, $localStorage) {
-  $scope.$on('$stateChangeSuccess', function(e, state) {
-    if(state.url === '/logout') {
-      $localStorage.unset('module');
-      $localStorage.unset('state');
-      $auth.signOut().then(function() {
-        $state.go('selector');
-      });
-    }
+  $scope.$on('$ionicView.enter', function(e, state) {
+    $localStorage.unset('module');
+    $localStorage.unset('state');
+    $auth.signOut().then(function() {
+      $state.go('selector');
+    });
   });
 });

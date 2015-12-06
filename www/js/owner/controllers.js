@@ -68,7 +68,6 @@ angular.module('owner.controllers', ['ionic-timepicker'])
     var method = !$scope.profile.id ? '$save' : '$update';
     $scope.profile[method]().then(function(profile) {
       $toast.show('Salvo com sucesso');
-      $scope.profile = new Profile();
     });
   };
 })
@@ -81,6 +80,9 @@ angular.module('owner.controllers', ['ionic-timepicker'])
   });
 
   $auth.validateUser({config: 'owner'}).then(function(owner) {
+    if(owner.profile_id === null) {
+      $state.go('owner.profile');
+    }
     $scope.uiConfig.config(owner);
   });
 })
@@ -115,8 +117,8 @@ angular.module('owner.controllers', ['ionic-timepicker'])
 
   $scope.selectClient = function(item) {
     $scope.event.client_id = item.client.id;
-    $scope.event.name = item.name;
-    $scope.event.client = item.mobile;
+    $scope.event.name = item.name || item.client.name;
+    $scope.event.email_or_mob = item.mobile || item.client.email;
   };
 
   $scope.render = function(item) {

@@ -2,8 +2,8 @@ angular.module('app.configs', [])
 
 .factory('$config', function($localStorage) {
   var $data = {
-    // host: 'https://warm-dusk-4656.herokuapp.com'
-    host: 'http://localhost:3000/'
+    host: 'https://warm-dusk-4656.herokuapp.com/'
+    // host: 'http://localhost:3000/'
   };
   var configs = {
     host: function() {
