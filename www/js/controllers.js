@@ -38,12 +38,12 @@ angular.module('app.controllers', [])
     var module = $localStorage.get('module');
     $auth.authenticate(provider, {config: module}).then(function(user) {
       var state = $localStorage.get('state');
-      $state.go(state);
+      $state.go(state, {}, {reload: true});
     });
   };
 })
 
-.controller('LogoutCtrl', function($scope, $auth, $state, $localStorage) {
+.controller('LogoutCtrl', function($scope, $auth, $state, $localStorage, $ionicHistory) {
   $scope.$on('$ionicView.enter', function(e, state) {
     $localStorage.unset('module');
     $localStorage.unset('state');
