@@ -11,7 +11,7 @@ angular.module('app.controllers', [])
 
 .controller('SelectorCtrl', function($scope, $auth, $state, $localStorage) {
   var state = $localStorage.get('state');
-  if(state !== undefined) {
+  if(state !== undefined && $auth.user.signedIn) {
      $state.go(state);
   }
 
