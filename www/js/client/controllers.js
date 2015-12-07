@@ -5,7 +5,7 @@ angular.module('client.controllers', [])
   $scope.client = $auth.user;
   $scope.profile.name = $auth.user.name;
   if($auth.user.profile_id !== null) {
-    $scope.profile.$get();
+    $scope.profile.$get({id: $auth.user.profile_id});
   }
 
   $scope.cep = {value: ''};

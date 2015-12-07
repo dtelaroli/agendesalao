@@ -154,7 +154,7 @@ angular.module('app.services', ['ngResource'])
     $(uiCalendarConfig.calendars.monthly).fullCalendar('prev');
   };
 
-  var scrollSize = window.screen.height / 3;
+  var scrollSize = window.screen.height / 2;
 
   data.down = function() {
     _scroll(scrollSize * -1);
